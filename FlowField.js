@@ -1,6 +1,5 @@
 import _ from "lodash";
 
-let a = [];
 export default class FlowField {
   constructor(groundMesh, scene) {
     this.scene = scene;
@@ -102,9 +101,12 @@ export default class FlowField {
       tilesToGoThrough = [];
       distance = distance + 1;
       //console.timeEnd('2')
-    } while (/* Still going while not everything updated */
-    _.chain(this.grids[idGrid]).flatten().filter(cell => !cell.updated).value()
-      .length !== 0);
+    } /* Still going while not everything updated */ while (_.chain(
+      this.grids[idGrid]
+    )
+      .flatten()
+      .filter(cell => !cell.updated)
+      .value().length !== 0);
   }
 
   updateVectorField(target) {
