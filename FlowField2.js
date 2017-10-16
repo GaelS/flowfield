@@ -1,27 +1,39 @@
 /* @flow */
-export default function(step: Number, xRange: Number, yRange: Number) {
-  console.log(step);
-  return {};
-} /* 
-export default class FlowField {
-  constructor(groundMesh, scene) {
-    this.scene = scene;
-    this.step = 25; //hardcoded for now
-    this.xMax = groundMesh._maxX * 2 / this.step;
-    this.zMax = groundMesh._maxZ * 2 / this.step;
-    this.initialGrid = _.range(0, this.xMax).map(ptX => {
-      return _.range(0, this.zMax).map(ptZ => {
-        let mapLimites =
-          ptX === 0 ||
-          ptZ === 0 ||
-          ptX === this.xMax - 1 ||
-          ptZ === this.zMax - 1;
-        return {
-          distance: mapLimites ? 9999 : -1,
-          updated: mapLimites ? true : false,
-          direction: [0, 0] //x, z components
-        };
-      });
-    });
-  }
-} */
+import _ from "lodash";
+import { Map, List } from "immutable";
+import type { Cell, Grid, FlowField } from "./types";
+
+export default function(
+  step: number,
+  height: number,
+  width: number
+): FlowField {
+  const xRange: number = Math.ceil(width / step);
+  const yRange: number = Math.ceil(height / step);
+
+  let grid: Grid = List(_.range(0, xRange)).map((__: number): List<Cell> =>
+    List(_.range(0, yRange)).map((__: number): Cell =>
+      Map({
+        distance: 0,
+        updated: false,
+        direction: [0, 0]
+      })
+    )
+  );
+  return {
+    getGrid(): Grid {
+      return grid;
+    },
+    getCell(x: number, y: number): Cell {
+      return grid.get(x).get(y);
+    },
+    updateGrid(fn: Function): Grid | Error {
+      try {
+        grid = fn(grid);
+        return grid;
+      } catch (e) {
+        throw "Invalid Modification";
+      }
+    }
+  };
+}
