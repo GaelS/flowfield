@@ -16,18 +16,5 @@ describe("FlowField", function() {
       const columns = flowfield.getGrid().size === 10;
       expect(rows && columns).toBeTruthy();
     });
-
-    it("should return an grid containing cells with distance, direction and updated properties", function() {
-      const cell = flowfield.getCell(0, 0);
-      expect(cell).toEqual(
-        expect.objectContaining(
-          Map({
-            distance: expect.any(Number),
-            updated: expect.any(Boolean),
-            direction: expect.any(Array)
-          })
-        )
-      );
-    });
   });
 });

@@ -256,21 +256,3 @@ function updateDistance(grid, tilesToUpdate, distance) {
 function getTileNumber(point, step) {
   return Math.floor(point / step);
 }
-//function to get tile indices
-//corrected if map edges are reached
-function getCorrectedTiles(target, xMax, zMax, step) {
-  let tmpTargetTileX = getTileNumber(target.x, step);
-  let tmpTargetTileZ = getTileNumber(target.z, step);
-  //corrected target if
-  //map edges are reached
-  let targetTileX = tmpTargetTileX === 0
-    ? 1
-    : tmpTargetTileX === xMax - 1 ? tmpTargetTileX - 1 : tmpTargetTileX;
-  let targetTileZ = tmpTargetTileZ === 0
-    ? 1
-    : tmpTargetTileZ === zMax - 1 ? tmpTargetTileZ - 1 : tmpTargetTileZ;
-  return {
-    targetTileX,
-    targetTileZ
-  };
-}
