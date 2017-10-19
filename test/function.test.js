@@ -2,7 +2,9 @@ var expect = require("expect");
 var createFlowField = require("../FlowField2").default;
 var {
   getCorrectedTileIndices,
-  getNeighbours
+  getNeighbours,
+  updateDistance,
+  updateDistance
 } = require("../basicFunctions").default;
 var { Map } = require("immutable");
 
@@ -29,6 +31,21 @@ describe("Functions behavior", function() {
       expect(A).toThrow();
       expect(B).toThrow();
       expect(C).toThrow();
+    });
+    it("should add a new target and remove the previous one", function() {
+      const FF = createFlowField(1, 2, 2);
+      const grid = FF.getGrid();
+      const newGrid = FF.updateGrid(updateDistance([0, 0], 0));
+
+      expect(newGrid.getIn([0, 0])).toEqual(
+        Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
+      );
+
+      const newGrid2 = FF.updateGrid(updateDistance([0, 1], 0));
+
+      expect(newGrid2.getIn([0, 0])).not.toEqual(
+        Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
+      );
     });
   });
 });

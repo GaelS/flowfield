@@ -1,7 +1,7 @@
 /* @flow */
 import _ from "lodash";
 import { Map, List } from "immutable";
-import type { Cell, Grid, FlowField } from "./types";
+import type { Cell, Grid, FlowField, UpdateFunction, position } from "./types";
 
 export default function(
   step: number,
@@ -10,13 +10,14 @@ export default function(
 ): FlowField {
   const xRange: number = Math.ceil(width / step);
   const yRange: number = Math.ceil(height / step);
-
-  let grid: Grid = List(_.range(0, xRange)).map((__: number): List<Cell> =>
-    List(_.range(0, yRange)).map((__: number): Cell =>
+  let target: ?position;
+  let grid: Grid = List(_.range(0, xRange)).map((): List<Cell> =>
+    List(_.range(0, yRange)).map((): Cell =>
       Map({
-        distance: 0,
+        distance: -1,
         updated: false,
-        direction: [0, 0]
+        direction: [0, 0],
+        obstacle: false
       })
     )
   );
@@ -27,12 +28,12 @@ export default function(
     getCell(x: number, y: number): Cell {
       return grid.get(x).get(y);
     },
-    updateGrid(fn: Function): Grid | Error {
+    updateGrid(fn: UpdateFunction): Grid | Error {
       try {
-        grid = fn(grid);
+        grid = fn(grid, step, height, width, target);
         return grid;
       } catch (e) {
-        throw "Invalid Modification";
+        throw e;
       }
     }
   };

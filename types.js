@@ -9,4 +9,6 @@ type FlowField = {
   updateGrid: Function
 };
 type Position = Array<number>;
-export type { Cell, Grid, FlowField, Position };
+type UpdateFunction = (Grid, ?number, ?number, ?number, ?position) => Grid;
+
+export type { Cell, Grid, FlowField, Position, UpdateFunction };

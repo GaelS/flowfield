@@ -24,7 +24,8 @@ describe("FlowField", function() {
         Map({
           distance: 2,
           updated: true,
-          direction: [2, 1]
+          direction: [2, 1],
+          obstacle:false,
         })
       );
     });
