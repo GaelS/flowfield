@@ -16,7 +16,7 @@ function addBuilding(position: Array<number>): Function {
   };
 }
 
-function getNeighbours(position: Position, size: number): Array<Position> {
+function getNeighbours(position: Position): Array<Position> {
   const [x, y]: Position = position;
   if (x < 0 && y < 0) {
     return [];
@@ -65,7 +65,7 @@ function updateDistance(
 }
 function setDistance(
   grid: Grid,
-  position: position,
+  position: Position,
   distance: number,
   step: number
 ): Grid {
@@ -78,60 +78,40 @@ function setDistance(
   const updatedGrid = grid.setIn(position, update);
   return updatedGrid;
 }
-/* this.grids[idGrid][targetTileX][targetTileZ].updated = true;
-  let tilesTarget = [[targetTileX, targetTileZ]];
-  let tilesToGoThrough = [];
-  let distance = 1;
-  //loop to go through
-  //while not all elements in
-  //this.grid are updated
-  //with distance value from new target
-  do {
-    //loop through all current tiles selected
-    //start with target tile clicked
-    tilesTarget.forEach(tile => {
-      _([this.grids[idGrid][tile[0]][tile[1]]])
-        .filter(cell => cell.distance !== 9999)
-        .forEach(currentTile => {
-          //only update neighbours' cell
-          //for cell without buildings on it
-          let tilesToUpdate = getNeighbours(
-            tile[0],
-            tile[1],
-            this.xMax,
-            this.zMax,
-            this.step
-          );
-          updateDistance(this.grids[idGrid], tilesToUpdate, distance);
-          tilesToGoThrough.push(tilesToUpdate);
-        });
-    });
-    //Get all neightbours from current tile that needs
-    //to get distance value updated
-    tilesTarget = _(tilesToGoThrough)
-      //tilesToGoThrough array of array
-      //=> needs to be flattened
-      .flatten()
-      //join tuple in string
-      .map(tile => tile.join(","))
-      //remove duplicates
-      .uniq()
-      //get tuple of int back
-      .map(tile => tile.split(",").map(e => parseInt(e, 10)));
 
-    tilesToGoThrough = [];
-    distance = distance + 1;
-    //console.timeEnd('2')
-  } /* Still going while not everything updated  while (_.chain(
-    this.grids[idGrid]
-  )
-    .flatten()
-    .filter(cell => !cell.updated)
-    .value().length !== 0); */
-//}
+/* function updateVectorField(target) {
+  let { targetTileX, targetTileZ } = getCorrectedTiles(
+    target,
+    this.xMax,
+    this.zMax,
+    this.step
+  );
+  const idGrid = `${targetTileX}${targetTileZ}`;
+  //tmp
+  a.forEach(id => this.scene.getMeshByID(id).dispose());
+  a = [];
+  let newGrid = this.grids[idGrid].map((row, i) => {
+    return row.map((cell, j) => {
+      let distance = cell.distance === 9999 ? -9999 : cell.distance;
+      cell.direction = getDirection(
+        i,
+        j,
+        distance,
+        this.xMax,
+        this.zMax,
+        this.step,
+        this.grids[idGrid]
+      );
+      return cell;
+    });
+  });
+  this.grids[idGrid] = newGrid;
+} */
+
+
 export default {
   addBuilding,
   getNeighbours,
   getCorrectedTileIndices,
-  updateDistance
+  updateDistance,
 };

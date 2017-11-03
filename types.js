@@ -6,9 +6,16 @@ type Grid = List<List<Cell>>;
 type FlowField = {
   getGrid: Function,
   getCell: Function,
-  updateGrid: Function
+  //updateGrid: Function,
+  updateDistance: Function,
+  updateVector: Function,
 };
 type Position = Array<number>;
-type UpdateFunction = (Grid, ?number, ?number, ?number, ?position) => Grid;
+type UpdateFunction = (
+  Grid,
+  ?Position,
+  ?number,
+  ?number,
+) => Grid;
 
 export type { Cell, Grid, FlowField, Position, UpdateFunction };

@@ -3,7 +3,6 @@ var createFlowField = require("../FlowField2").default;
 var {
   getCorrectedTileIndices,
   getNeighbours,
-  updateDistance,
   updateDistance
 } = require("../basicFunctions").default;
 var { Map } = require("immutable");
@@ -35,15 +34,18 @@ describe("Functions behavior", function() {
     it("should add a new target and remove the previous one", function() {
       const FF = createFlowField(1, 2, 2);
       const grid = FF.getGrid();
-      const newGrid = FF.updateGrid(updateDistance([0, 0], 0));
+      FF.setTarget([0, 0]);
 
-      expect(newGrid.getIn([0, 0])).toEqual(
+      expect(FF.getGrid().getIn([0, 0])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
 
-      const newGrid2 = FF.updateGrid(updateDistance([0, 1], 0));
+      FF.setTarget([0, 1]);
 
-      expect(newGrid2.getIn([0, 0])).not.toEqual(
+      expect(FF.getGrid().getIn([0, 0])).not.toEqual(
+        Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
+      );
+      expect(FF.getGrid().getIn([0, 1])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
     });

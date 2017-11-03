@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "babel-node index.js",
-    "test": "BABEL_ENV=test ./node_modules/mocha/bin/mocha",
+    "test": "BABEL_ENV=test ./node_modules/jest/bin/jest.js",
     "test:watch": "BABEL_ENV=test ./node_modules/jest/bin/jest.js --watchAll"
   },
   "babel": {
