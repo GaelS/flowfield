@@ -1,0 +1,13 @@
+<html>
+<div id="app"></div>
+
+</html>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react/16.0.0/umd/react.production.min.js'></script>
+<script src='../dist/bundle.js'></script>
+<script>
+  var grid = FlowField.default(1, 2, 2);
+  grid.setTarget([0, 0]);
+  grid.updateDistance();
+  console.log(grid.getGrid().toArray()[0].toArray())
+
+</script>
