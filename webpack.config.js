@@ -1,10 +1,11 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  entry: "./index.js",
+  entry: './index.js',
   output: {
-    path: path.join(__dirname, "dist"),
-    filename: "bundle.js"
+    path: path.join(__dirname, 'dist'),
+    filename: 'bundle.js',
+    library: 'FlowField'
   },
   module: {
     rules: [
@@ -12,13 +13,10 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["env"],
-            plugins: [
-              "babel-preset-flow",
-              "babel-plugin-transform-object-rest-spread"
-            ]
+            presets: ['env', 'babel-preset-flow'],
+            plugins: ['transform-object-rest-spread']
           }
         }
       }
