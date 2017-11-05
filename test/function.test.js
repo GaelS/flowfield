@@ -49,5 +49,14 @@ describe("Functions behavior", function() {
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
     });
+    it("should add an obstacle", function() {
+      const FF = createFlowField(1, 2, 2);
+      const grid = FF.getGrid();
+      const newGrid = FF.setObstacle([1, 1]);
+
+      expect(newGrid.getIn([1, 1])).toEqual(
+        Map({ distance: -1, updated: true, direction: [0, 0], obstacle: true })
+      );
+    });
   });
 });

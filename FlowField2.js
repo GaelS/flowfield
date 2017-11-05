@@ -24,7 +24,16 @@ export default function(
       })
     )
   );
-
+  function outOfBounds(position: Position): boolean {
+    return (
+      !position ||
+      position.length < 2 ||
+      position[0] < 0 ||
+      position[1] < 0 ||
+      position[0] > width / step ||
+      position[1] > height / step
+    );
+  }
   return {
     getGrid(): Grid {
       return grid;
@@ -32,8 +41,21 @@ export default function(
     getCell(x: number, y: number): Cell {
       return grid.get(x).get(y);
     },
+    setObstacle(obstacle: Position): Grid {
+      if (outOfBounds(obstacle)) {
+        throw "Invalid position";
+      }
+      const cell: ?Cell = grid.getIn(obstacle);
+      if (cell) {
+        const updatedCell: Cell = cell
+          .set("obstacle", true)
+          .set("updated", true);
+        grid = grid.setIn(obstacle, updatedCell);
+      }
+      return grid;
+    },
     setTarget(newTarget: Position): Position {
-      if (!newTarget || newTarget[0] < 0 || newTarget[1] < 0) {
+      if (outOfBounds(newTarget)) {
         throw "Invalid target";
       }
       if (target) {
@@ -48,7 +70,7 @@ export default function(
       const newTargetCell: ?Cell = grid.getIn(newTarget);
       if (newTargetCell) {
         const targetSet: Cell = newTargetCell.merge(
-          Map({ updated: true, distance: 0 })
+          Map({ distance: 0, updated: true })
         );
         grid = grid.setIn(newTarget, targetSet);
       }
@@ -59,23 +81,19 @@ export default function(
       return target;
     },
     updateDistance(): Grid {
+      if (!target) {
+        return grid;
+      }
       grid = grid.map((row: List<Cell>): List<Cell> =>
         row.map((cell: Cell): Cell => {
           const currentDistance: number = cell.get("distance");
-          return currentDistance > 0 ? cell : cell.set("updated", false);
+          return currentDistance === 0 ? cell : cell.set("updated", false);
         })
       );
-      const numberOfObstacles: number = grid.map((row: List<Cell>): List<
-        Cell
-      > => row.filter((cell: Cell): boolean => cell.get("obstacle"))).size;
       let distance: number = 1;
-      let updatedTiles: number = 1 + numberOfObstacles; // 1 because the target
       let tilesToUpdate: List<Position> = List();
       tilesToUpdate = tilesToUpdate.push(target);
-      //loop to go through
-      //while not all elements in
-      //this.grid are updated
-      //with distance  value from new target
+      console.time("1");
       do {
         const neighbours: List<Position> = tilesToUpdate
           .map((position: Position): List<Position> => {
@@ -84,38 +102,24 @@ export default function(
           .flatten()
           .filter(
             (position: Position) =>
-              console.log(
-                position,
-                height,
-                width,
-                position[0] < height && position[1] < width
-              ) ||
-              (position[0] < height && position[1] < width)
+              position[0] < width / step && position[1] < height / step
           );
 
-        tilesToUpdate.clear();
-        console.log(neighbours.size);
+        tilesToUpdate = tilesToUpdate.clear();
         neighbours.forEach((position: Position): void => {
-          if (grid.getIn(position).get("updated")) {
-            return;
-          }
           const cell = grid.getIn(position);
-          if (cell) {
+          if (cell && !cell.get("updated")) {
+            //console.log(cell, !cell.get("updated"), cell.get("updated"));
             grid = grid.setIn(
               position,
               cell.merge(Map({ distance, updated: true }))
             );
-            updatedTiles = updatedTiles + 1;
-
             tilesToUpdate = tilesToUpdate.push(position);
           }
         });
-        //console.log(tilesToUpdate);
         distance = distance + 1;
-        //loop through all current tiles selected
-        //start with target tile clicked
-      } /* Still going while not everything updated */ while (updatedTiles ===
-        width * height / step);
+      } while (tilesToUpdate.size > 0);
+      console.timeEnd("1");
       return grid;
     },
     updateVector(): void {

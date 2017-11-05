@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "babel-node index.js",
+    "dev": "BABEL_ENV=dev babel-node index.js",
     "test": "BABEL_ENV=test ./node_modules/jest/bin/jest.js",
     "test:watch": "BABEL_ENV=test ./node_modules/jest/bin/jest.js --watchAll"
   },
   "babel": {
     "env": {
       "test": {
+        "presets": [
+          "babel-preset-flow",
+          "babel-preset-env"
+        ]
+      },
+      "dev": {
         "presets": [
           "babel-preset-flow",
           "babel-preset-env"
@@ -34,6 +40,8 @@
     "webpack-dev-server": "^2.9.1"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "global": "^4.3.2",
     "immutable": "^3.8.2",
     "lodash": "^4.17.4"
   }

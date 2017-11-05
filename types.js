@@ -6,6 +6,8 @@ type Grid = List<List<Cell>>;
 type FlowField = {
   getGrid: Function,
   getCell: Function,
+  setTarget: Function,
+  getTarget: Function,
   //updateGrid: Function,
   updateDistance: Function,
   updateVector: Function,
