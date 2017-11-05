@@ -34,18 +34,18 @@ describe("Functions behavior", function() {
     it("should add a new target and remove the previous one", function() {
       const FF = createFlowField(1, 2, 2);
       const grid = FF.getGrid();
-      FF.setTarget([0, 0]);
+      const grid1 = FF.setTarget([0, 0]);
 
-      expect(FF.getGrid().getIn([0, 0])).toEqual(
+      expect(grid1.getIn([0, 0])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
 
-      FF.setTarget([0, 1]);
+      const grid2 = FF.setTarget([0, 1]);
 
-      expect(FF.getGrid().getIn([0, 0])).not.toEqual(
+      expect(grid2.getIn([0, 0])).not.toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
-      expect(FF.getGrid().getIn([0, 1])).toEqual(
+      expect(grid2.getIn([0, 1])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
     });
@@ -57,6 +57,36 @@ describe("Functions behavior", function() {
       expect(newGrid.getIn([1, 1])).toEqual(
         Map({ distance: -1, updated: true, direction: [0, 0], obstacle: true })
       );
+    });
+    it("should throw when uncorrect coordinated are given to add obstacle", function() {
+      const FF = createFlowField(1, 2, 2);
+      const A = FF.setObstacle.bind(null, undefined);
+      const B = FF.setObstacle.bind(null, []);
+      const C = FF.setObstacle.bind(null, [0]);
+      const D = FF.setObstacle.bind(null, [3, 0]);
+      const E = FF.setObstacle.bind(null, [0, 3]);
+      expect(A).toThrow();
+      expect(B).toThrow();
+      expect(C).toThrow();
+      expect(D).toThrow();
+      expect(E).toThrow();
+    });
+    it("should throw when uncorrect coordinated are given to set a new target", function() {
+      const FF = createFlowField(1, 2, 2);
+      const A = FF.setTarget.bind(null, undefined);
+      const B = FF.setTarget.bind(null, []);
+      const C = FF.setTarget.bind(null, [0]);
+      const D = FF.setTarget.bind(null, [3, 0]);
+      const E = FF.setTarget.bind(null, [0, 3]);
+      expect(A).toThrow();
+      expect(B).toThrow();
+      expect(C).toThrow();
+      expect(D).toThrow();
+      expect(E).toThrow();
+    });
+    it("should return the given cell when correct coordinated are provided", function() {
+      const FF = createFlowField(1, 2, 2);
+      expect(FF.getCell([0, 1])).toEqual( FF.getGrid().getIn([0, 1]));
     });
   });
 });

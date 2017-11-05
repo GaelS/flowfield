@@ -38,8 +38,11 @@ export default function(
     getGrid(): Grid {
       return grid;
     },
-    getCell(x: number, y: number): Cell {
-      return grid.get(x).get(y);
+    getCell(position: Position): ?Cell {
+      if(outOfBounds(position)){
+        throw 'Out of bounds coordinated provided';
+      }
+      return grid.getIn(position);
     },
     setObstacle(obstacle: Position): Grid {
       if (outOfBounds(obstacle)) {
@@ -54,7 +57,7 @@ export default function(
       }
       return grid;
     },
-    setTarget(newTarget: Position): Position {
+    setTarget(newTarget: Position): Grid {
       if (outOfBounds(newTarget)) {
         throw "Invalid target";
       }
@@ -75,7 +78,7 @@ export default function(
         grid = grid.setIn(newTarget, targetSet);
       }
       target = newTarget;
-      return target;
+      return grid;
     },
     getTarget(): ?Position {
       return target;
