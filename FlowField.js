@@ -132,7 +132,7 @@ export default function(
             return cell;
           }
           //Get All neightbours for current cell
-          let neighbours: List<Cell> = utils
+          let neighbours: Array<Cell> = utils
             .getNeighbours([i, j], width, height, step)
             .map((position: Position): Array => [
               grid.getIn(position),
@@ -140,7 +140,7 @@ export default function(
             ])
             .filter((cell: Cell): boolean => !cell[0].get('obstacle'));
           //Get minimum distance
-            let minimumDistance: number = _(
+          let minimumDistance: number = _(
             neighbours
           ).min((cell: Cell): number => cell[0].get('distance'))[0];
           //Get only cell with their distance equals to minimum
