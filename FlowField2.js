@@ -39,8 +39,8 @@ export default function(
       return grid;
     },
     getCell(position: Position): ?Cell {
-      if(outOfBounds(position)){
-        throw 'Out of bounds coordinated provided';
+      if (outOfBounds(position)) {
+        throw "Out of bounds coordinated provided";
       }
       return grid.getIn(position);
     },
@@ -52,6 +52,7 @@ export default function(
       if (cell) {
         const updatedCell: Cell = cell
           .set("obstacle", true)
+          .set("distance", -1)
           .set("updated", true);
         grid = grid.setIn(obstacle, updatedCell);
       }
@@ -89,8 +90,11 @@ export default function(
       }
       grid = grid.map((row: List<Cell>): List<Cell> =>
         row.map((cell: Cell): Cell => {
-          const currentDistance: number = cell.get("distance");
-          return currentDistance === 0 ? cell : cell.set("updated", false);
+          const isItTheTarget: boolean = cell.get("distance") === 0;
+          const isItAnObstacle: boolean = cell.get("obstacle");
+          return isItAnObstacle || isItTheTarget
+            ? cell
+            : cell.set("updated", false);
         })
       );
       let distance: number = 1;
@@ -112,7 +116,6 @@ export default function(
         neighbours.forEach((position: Position): void => {
           const cell = grid.getIn(position);
           if (cell && !cell.get("updated")) {
-            //console.log(cell, !cell.get("updated"), cell.get("updated"));
             grid = grid.setIn(
               position,
               cell.merge(Map({ distance, updated: true }))
