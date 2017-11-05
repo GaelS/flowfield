@@ -104,13 +104,9 @@ export default function(
       do {
         const neighbours: List<Position> = tilesToUpdate
           .map((position: Position): List<Position> => {
-            return List(utils.getNeighbours(position));
+            return List(utils.getNeighbours(position, width, height, step));
           })
-          .flatten()
-          .filter(
-            (position: Position) =>
-              position[0] < width / step && position[1] < height / step
-          );
+          .flatten();
 
         tilesToUpdate = tilesToUpdate.clear();
         neighbours.forEach((position: Position): void => {
@@ -128,16 +124,59 @@ export default function(
       console.timeEnd("1");
       return grid;
     },
-    updateVector(): void {
-      return;
+    updateVectorField(): void {
+      let newGrid: Grid = grid.map((row, i) => {
+        return row.map((cell, j) => {
+          if (cell.get("distance") === 0 || cell.get("obstacle")) {
+            return cell;
+          }
+          let neighbours = utils
+            .getNeighbours([i, j], width, height, step)
+            .map(position => [grid.getIn(position), position])
+            .filter(e => !e[0].get("obstacle"));
+          let minimumDistance = _(neighbours).min(e => e[0].get("distance"));
+          //TODO
+          //get cell based on angle difference with target
+          //to replace naivev selection of the first min we find
+          let validNeighbours = _(neighbours)
+            .filter(
+              cell =>
+                cell[0].get("distance") === minimumDistance[0].get("distance")
+            )
+            .map(([cell, position]) => {
+              const toTarget = [target[0] - i, target[1] - j];
+              const toLocalTarget = [position[0] - i, position[1] - j];
+              const dot =
+                toTarget[0] * toLocalTarget[0] + toTarget[1] * toLocalTarget[1];
+              const cross =
+                toTarget[0] * toLocalTarget[1] - toTarget[1] * toLocalTarget[0];
+
+              return [Math.abs(Math.atan(cross / dot)), position];
+            })
+            .min(e => e[0]);
+
+          const test = _(neighbours)
+            .filter(
+              cell =>
+                cell[0].get("distance") === minimumDistance[0].get("distance")
+            )
+            .map(([cell, position]) => {
+              const toTarget = [target[0] - i, target[1] - j];
+              const toLocalTarget = [position[0] - i, position[1] - j];
+              const dot =
+                toTarget[0] * toLocalTarget[0] + toTarget[1] * toLocalTarget[1];
+              const cross =
+                toTarget[0] * toLocalTarget[1] - toTarget[1] * toLocalTarget[0];
+
+              return [Math.abs(Math.atan(cross / dot)), position];
+            })
+            .value();
+          const min = _.minBy(test, e => e[0]);
+          return cell.set("direction", [min[1][0] - i, min[1][1] - j]);
+        });
+      });
+      grid = newGrid;
+      return grid;
     }
   };
 }
-/*  
-updateGrid(fn: UpdateFunction): Grid | Error {
-  try {
-    grid = fn(grid, step, height, width, target);
-    return grid;
-  } catch (e) {
-    throw  e;
-  } */

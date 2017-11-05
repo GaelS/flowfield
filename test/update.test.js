@@ -4,9 +4,20 @@ var { List } = require("immutable");
 
 describe("FlowField", function() {
   const flowfield = createFlowField(1, 2, 2);
-
+  describe("target", function() {
+    const FF = createFlowField(1, 4, 4);
+    const grid = FF.getGrid();
+    FF.setTarget([0, 0]);
+    expect(FF.getTarget()).toEqual([0, 0]);
+  });
   describe("update", function() {
-    it("should", function() {
+    it("should return current grid if no target are defined", function() {
+      const FF = createFlowField(1, 4, 4);
+      const grid = FF.getGrid();
+      FF.updateDistance();
+      expect(FF.getGrid()).toEqual(grid);
+    });
+    it("should calculate distances from target correctly", function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([0, 0]);
@@ -18,7 +29,7 @@ describe("FlowField", function() {
       expect(newGrid[2]).toEqual(List.of(2, 2, 2, 3));
       expect(newGrid[3]).toEqual(List.of(3, 3, 3, 3));
     });
-    it("should update distances correctly when one adds obstacle", function() {
+    it("should update distances correctly when one adds obstacle 1", function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([1, 1]);
@@ -34,7 +45,7 @@ describe("FlowField", function() {
       expect(newGrid[3]).toEqual(List.of(2, 2, 2, 3));
     });
   });
-  it("should", function() {
+  it("should update distances correctly when one adds obstacle 2", function() {
     const FF = createFlowField(1, 10, 10);
     const grid = FF.getGrid();
     FF.setTarget([5, 5]);
@@ -57,7 +68,7 @@ describe("FlowField", function() {
     expect(newGrid[8]).toEqual(List.of(5, 4, 3, 3, 3, 3, 3, 3, 3, 4));
     expect(newGrid[9]).toEqual(List.of(5, 4, 4, 4, 4, 4, 4, 4, 4, 4));
   });
-  it("should", function() {
+  it("should update distances correctly when one adds obstacle 3", function() {
     const FF = createFlowField(1, 10, 10);
     const grid = FF.getGrid();
     FF.setTarget([5, 5]);
@@ -83,5 +94,47 @@ describe("FlowField", function() {
     expect(updatedGrid[7]).toEqual(List.of(5, 4, 3, 2, 2, 2, 2, -1, 5, 5));
     expect(updatedGrid[8]).toEqual(List.of(5, 4, 3, 3, 3, 3, 3, -1, 5, 6));
     expect(updatedGrid[9]).toEqual(List.of(5, 4, 4, 4, 4, 4, 4, 4, 5, 6));
+  });
+  it("should calculate direction to target correctly", function() {
+    const FF = createFlowField(1, 4, 4);
+    const grid = FF.getGrid();
+    FF.setTarget([0, 0]);
+    FF.updateDistance();
+    const newGrid = FF.updateVectorField()
+      .map(e => e.map(r => r.get("direction")))
+      .toArray();
+    expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
+    expect(newGrid[1]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [0, -1]));
+    expect(newGrid[2]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [-1, -1]));
+    expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, 0], [-1, -1], [-1, -1]));
+  });
+  it("should calculate direction to target correctly 1", function() {
+    const FF = createFlowField(1, 4, 4);
+    const grid = FF.getGrid();
+    FF.setObstacle([1, 0]);
+    FF.setTarget([0, 0]);
+    FF.updateDistance();
+    const newGrid = FF.updateVectorField()
+      .map(e => e.map(r => r.get("direction")))
+      .toArray();
+    expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
+    expect(newGrid[1]).toEqual(List.of([0, 0], [-1, -1], [-1, -1], [0, -1]));
+    expect(newGrid[2]).toEqual(List.of([-1, 1], [-1, 0], [-1, -1], [-1, -1]));
+    expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, 0], [-1, -1], [-1, -1]));
+  });
+  it("should calculate direction to target correctly 2", function() {
+    const FF = createFlowField(1, 4, 4);
+    const grid = FF.getGrid();
+    FF.setObstacle([1, 0]);
+    FF.setObstacle([1, 1]);
+    FF.setTarget([0, 0]);
+    FF.updateDistance();
+    const newGrid = FF.updateVectorField()
+      .map(e => e.map(r => r.get("direction")))
+      .toArray();
+    expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
+    expect(newGrid[1]).toEqual(List.of([0, 0], [0, 0], [-1, -1], [0, -1]));
+    expect(newGrid[2]).toEqual(List.of([0, 1], [-1, 1], [-1, 0], [-1, -1]));
+    expect(newGrid[3]).toEqual(List.of([-1, 1], [-1, 0], [-1, -1], [-1, -1]));
   });
 });

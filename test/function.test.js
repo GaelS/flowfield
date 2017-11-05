@@ -2,15 +2,14 @@ var expect = require("expect");
 var createFlowField = require("../FlowField2").default;
 var {
   getCorrectedTileIndices,
-  getNeighbours,
-  updateDistance
+  getNeighbours
 } = require("../basicFunctions").default;
 var { Map } = require("immutable");
 
 describe("Functions behavior", function() {
   describe("getNeighbours", function() {
     it("should return an grid containing positions of the 3 cell's neighbours located in 0,0", function() {
-      const cells = getNeighbours([0, 0]);
+      const cells = getNeighbours([0, 0], 2, 2, 1);
       expect(cells.length).toEqual(3);
     });
     it("should return an empty list", function() {
@@ -86,7 +85,20 @@ describe("Functions behavior", function() {
     });
     it("should return the given cell when correct coordinated are provided", function() {
       const FF = createFlowField(1, 2, 2);
-      expect(FF.getCell([0, 1])).toEqual( FF.getGrid().getIn([0, 1]));
+      expect(FF.getCell([0, 1])).toEqual(FF.getGrid().getIn([0, 1]));
+    });
+    it("should throw an error the given cell when uncorrect coordinated are provided", function() {
+      const FF = createFlowField(1, 2, 2);
+      const A = FF.getCell.bind(null, undefined);
+      const B = FF.getCell.bind(null, []);
+      const C = FF.getCell.bind(null, [0]);
+      const D = FF.getCell.bind(null, [3, 0]);
+      const E = FF.getCell.bind(null, [0, 3]);
+      expect(A).toThrow();
+      expect(B).toThrow();
+      expect(C).toThrow();
+      expect(D).toThrow();
+      expect(E).toThrow();
     });
   });
 });

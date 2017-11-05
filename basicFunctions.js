@@ -3,9 +3,14 @@ import { Map, List } from "immutable";
 import _ from "lodash";
 import type { Cell, Grid, FlowField, Position, UpdateFunction } from "./types";
 
-function getNeighbours(position: Position): Array<Position> {
+function getNeighbours(
+  position: Position,
+  width: number,
+  height: number,
+  step: number
+): Array<Position> {
   const [x, y]: Position = position;
-  if (x < 0 && y < 0) {
+  if (x < 0 || y < 0 || x > width / step || y > height / step) {
     return [];
   }
   // neighbours order
@@ -23,7 +28,8 @@ function getNeighbours(position: Position): Array<Position> {
       [x + 1, y + 1],
       [x, y + 1]
     ],
-    ([x, y]: Position): boolean => x >= 0 && y >= 0
+    ([x, y]: Position): boolean =>
+      x >= 0 && y >= 0 && x < width / step && y < height / step
   );
 }
 
@@ -39,5 +45,5 @@ function getCorrectedTileIndices(target: Position, step: number): Position {
 
 export default {
   getNeighbours,
-  getCorrectedTileIndices,
+  getCorrectedTileIndices
 };

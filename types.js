@@ -8,16 +8,10 @@ type FlowField = {
   getCell: Function,
   setTarget: Function,
   getTarget: Function,
-  //updateGrid: Function,
   updateDistance: Function,
-  updateVector: Function,
+  updateVectorField: Function
 };
 type Position = Array<number>;
-type UpdateFunction = (
-  Grid,
-  ?Position,
-  ?number,
-  ?number,
-) => Grid;
+type UpdateFunction = (Grid, ?Position, ?number, ?number) => Grid;
 
 export type { Cell, Grid, FlowField, Position, UpdateFunction };
