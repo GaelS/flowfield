@@ -1,258 +1,182 @@
-import _ from "lodash";
+/* @flow */
+import _ from 'lodash';
+import { Map, List } from 'immutable';
 
-export default class FlowField {
-  constructor(groundMesh, scene) {
-    this.scene = scene;
-    this.step = 25; //hardcoded for now
-    this.xMax = groundMesh._maxX * 2 / this.step;
-    this.zMax = groundMesh._maxZ * 2 / this.step;
-    this.initialGrid = _.range(0, this.xMax).map(ptX => {
-      return _.range(0, this.zMax).map(ptZ => {
-        let mapLimites =
-          ptX === 0 ||
-          ptZ === 0 ||
-          ptX === this.xMax - 1 ||
-          ptZ === this.zMax - 1;
-        return {
-          distance: mapLimites ? 9999 : -1,
-          updated: mapLimites ? true : false,
-          direction: [0, 0] //x, z components
-        };
-      });
-    });
-    this.grids = {};
-  }
-  /*
-    **Update grid when a new building is added
-    */
-  updateGrid(buildingsExtend) {
-    buildingsExtend.forEach(extend => {
-      let xTile = getTileNumber(extend[0], this.step);
-      let zTile = getTileNumber(extend[1], this.step);
-      this.initialGrid[xTile][zTile].distance = 9999;
-      this.initialGrid[xTile][zTile].updated = true;
-    });
-  }
-  /*
-    ** Update distance values
-    ** of the grid when
-    ** new target is set
-    */
-  updateDistanceValue(target) {
-    let { targetTileX, targetTileZ } = getCorrectedTiles(
-      target,
-      this.xMax,
-      this.zMax,
-      this.step
-    );
+import type { Cell, Grid, FlowField, UpdateFunction, Position } from './types';
 
-    const idGrid = `${targetTileX}${targetTileZ}`;
-    //reset grid
-    //except for cell containing building
-    this.grids[idGrid] = _.cloneDeep(this.initialGrid).map(row => {
-      return row.map(cell => {
-        cell.updated = cell.distance === 9999 ? true : false;
-        return cell;
-      });
-    });
-    //set tile target to 0
-    this.grids[idGrid][targetTileX][targetTileZ].distance = 0;
-    this.grids[idGrid][targetTileX][targetTileZ].updated = true;
-    let tilesTarget = [[targetTileX, targetTileZ]];
-    let tilesToGoThrough = [];
-    let distance = 1;
-    //loop to go through
-    //while not all elements in
-    //this.grid are updated
-    //with distance value from new target
-    do {
-      //loop through all current tiles selected
-      //start with target tile clicked
-      tilesTarget.forEach(tile => {
-        _([this.grids[idGrid][tile[0]][tile[1]]])
-          .filter(cell => cell.distance !== 9999)
-          .forEach(currentTile => {
-            //only update neighbours' cell
-            //for cell without buildings on it
-            let tilesToUpdate = getNeighbours(
-              tile[0],
-              tile[1],
-              this.xMax,
-              this.zMax,
-              this.step
-            );
-            updateDistance(this.grids[idGrid], tilesToUpdate, distance);
-            tilesToGoThrough.push(tilesToUpdate);
-          });
-      });
-      //Get all neightbours from current tile that needs
-      //to get distance value updated
-      tilesTarget = _(tilesToGoThrough)
-        //tilesToGoThrough array of array
-        //=> needs to be flattened
-        .flatten()
-        //join tuple in string
-        .map(tile => tile.join(","))
-        //remove duplicates
-        .uniq()
-        //get tuple of int back
-        .map(tile => tile.split(",").map(e => parseInt(e, 10)));
+import utils from './basicFunctions';
 
-      tilesToGoThrough = [];
-      distance = distance + 1;
-      //console.timeEnd('2')
-    } /* Still going while not everything updated */ while (_.chain(
-      this.grids[idGrid]
+export default function(
+  step: number,
+  height: number,
+  width: number
+): FlowField {
+  const xRange: number = Math.ceil(width / step);
+  const yRange: number = Math.ceil(height / step);
+  let target: ?Position;
+  let cache: Map<Grid> = {};
+  let grid: Grid = List(_.range(0, xRange)).map((): List<Cell> =>
+    List(_.range(0, yRange)).map((): Cell =>
+      Map({
+        distance: -1,
+        updated: false,
+        direction: [0, 0],
+        obstacle: false
+      })
     )
-      .flatten()
-      .filter(cell => !cell.updated)
-      .value().length !== 0);
-  }
-
-  updateVectorField(target) {
-    let { targetTileX, targetTileZ } = getCorrectedTiles(
-      target,
-      this.xMax,
-      this.zMax,
-      this.step
-    );
-    const idGrid = `${targetTileX}${targetTileZ}`;
-    //tmp
-    a.forEach(id => this.scene.getMeshByID(id).dispose());
-    a = [];
-    let newGrid = this.grids[idGrid].map((row, i) => {
-      return row.map((cell, j) => {
-        let distance = cell.distance === 9999 ? -9999 : cell.distance;
-        cell.direction = getDirection(
-          i,
-          j,
-          distance,
-          this.xMax,
-          this.zMax,
-          this.step,
-          this.grids[idGrid]
-        );
-        return cell;
-      });
-    });
-    this.grids[idGrid] = newGrid;
-  }
-
-  getTile(position, target) {
-    let { targetTileX, targetTileZ } = getCorrectedTiles(
-      target,
-      this.xMax,
-      this.zMax,
-      this.step
-    );
-    const idGrid = `${targetTileX}${targetTileZ}`;
-    return this.grids[idGrid][getTileNumber(position.x, this.step)][
-      getTileNumber(position.z, this.step)
-    ];
-  }
-  cleanGrid(target) {
-    let { targetTileX, targetTileZ } = getCorrectedTiles(
-      target,
-      this.xMax,
-      this.zMax,
-      this.step
-    );
-    delete this.grids[`${targetTileX}${targetTileZ}`];
-  }
-  //Get mean position of a tile
-  getTileCenter(position) {
-    let { targetTileX, targetTileZ } = getCorrectedTiles(
-      position,
-      this.xMax,
-      this.zMax,
-      this.step
-    );
-    let distance = this.initialGrid[targetTileX][targetTileZ].distance;
-    let mean = (pt1, pt2, distance, step) => (pt1 * step + pt2 * step) / 2;
-    let meanX = mean(targetTileX, targetTileX + 1, distance, this.step);
-    let meanZ = mean(targetTileZ, targetTileZ + 1, distance, this.step);
-    return {
-      meanX,
-      meanZ,
-      available: distance !== 9999
-    };
-  }
-}
-
-//utils
-// function checkPointInsideTile(tile, point, step) {
-//     return point.x < (tile.x + step) && point.x > tile.x &&
-//         point.z < (tile.z + step) && point.z > tile.z;
-// }
-
-function getNeighbours(x, z, xMax, zMax, step) {
-  // neighbours order
-  // 1 8 7
-  // 2   6
-  // 3 4 5
-  const tooBigZ = z + 1 >= zMax;
-  const tooSmallZ = z - 1 < 0;
-  const tooBigX = x + 1 >= xMax;
-  const tooSmallX = x - 1 < 0;
-  return _.compact([
-    !tooSmallX && !tooBigZ ? [x - 1, z + 1] : null,
-    !tooSmallX ? [x - 1, z] : null,
-    !tooSmallX && !tooSmallZ ? [x - 1, z - 1] : null,
-    !tooSmallZ ? [x, z - 1] : null,
-    !tooBigX && !tooSmallZ ? [x + 1, z - 1] : null,
-    !tooBigX ? [x + 1, z] : null,
-    !tooBigX && !tooBigZ ? [x + 1, z + 1] : null,
-    !tooBigZ ? [x, z + 1] : null
-  ]);
-}
-
-function getGridNeighbours(x, z, xMax, zMax, grid) {
-  let coords = getNeighbours(x, z, xMax, zMax);
-  return coords.map(coord => (!!coord ? grid[coord[0]][coord[1]] : null));
-}
-
-function getMinimumNeighbour(x, z, currentDistance, xMax, zMax, step, grid) {
-  let neighbours = getGridNeighbours(x, z, xMax, zMax, grid);
-  //Get neightboor with largest difference
-  // => going toward target fastest
-
-  return _(neighbours)
-    .map((cell, i) => [i, !!cell ? cell.distance : -1])
-    .compact()
-    .minBy(cell => cell[1])[0];
-}
-//Return vector direction for a cell
-function getDirectionFromIndex(index) {
-  // neighbours order
-  // 1 8 7
-  // 2   6
-  // 3 4 5
-  return (
-    [[-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1]][
-      index
-    ] || [0, 0]
   );
-}
-
-function getDirection(x, z, distance, xMax, zMax, step, grid) {
-  return distance === 0
-    ? [0, 0]
-    : getDirectionFromIndex(
-        getMinimumNeighbour(x, z, distance, xMax, zMax, step, grid)
+  function outOfBounds(position: Position): boolean {
+    return (
+      !position ||
+      position.length < 2 ||
+      position[0] < 0 ||
+      position[1] < 0 ||
+      position[0] > width / step ||
+      position[1] > height / step
+    );
+  }
+  return {
+    getGrid(): Grid {
+      return grid;
+    },
+    getCell(position: Position): ?Cell {
+      if (outOfBounds(position)) {
+        throw 'Out of bounds coordinated provided';
+      }
+      return grid.getIn(position);
+    },
+    setObstacle(obstacle: Position): Grid {
+      if (outOfBounds(obstacle)) {
+        throw 'Invalid position';
+      }
+      const cell: ?Cell = grid.getIn(obstacle);
+      if (cell) {
+        const updatedCell: Cell = cell
+          .set('obstacle', true)
+          .set('distance', -1)
+          .set('updated', true);
+        grid = grid.setIn(obstacle, updatedCell);
+      }
+      return grid;
+    },
+    setTarget(newTarget: Position): Grid {
+      if (outOfBounds(newTarget)) {
+        throw 'Invalid target';
+      }
+      if (target) {
+        const targetCell: ?Cell = grid.getIn(target);
+        if (targetCell) {
+          const cellReset: Cell = targetCell.merge(
+            Map({ updated: false, distance: -1 })
+          );
+          grid = grid.setIn(target, cellReset);
+        }
+      }
+      const newTargetCell: ?Cell = grid.getIn(newTarget);
+      if (newTargetCell) {
+        const targetSet: Cell = newTargetCell.merge(
+          Map({ distance: 0, updated: true })
+        );
+        grid = grid.setIn(newTarget, targetSet);
+      }
+      target = newTarget;
+      return grid;
+    },
+    getTarget(): ?Position {
+      return target;
+    },
+    updateDistance(): Grid {
+      if (!target) {
+        return grid;
+      }
+      grid = grid.map((row: List<Cell>): List<Cell> =>
+        row.map((cell: Cell): Cell => {
+          const isItTheTarget: boolean = cell.get('distance') === 0;
+          const isItAnObstacle: boolean = cell.get('obstacle');
+          return isItAnObstacle || isItTheTarget
+            ? cell
+            : cell.set('updated', false);
+        })
       );
-}
+      let distance: number = 1;
+      let tilesToUpdate: List<Position> = List();
+      tilesToUpdate = tilesToUpdate.push(target);
+      console.time('1');
+      do {
+        const neighbours: List<Position> = tilesToUpdate
+          .map((position: Position): List<Position> => {
+            return List(utils.getNeighbours(position, width, height, step));
+          })
+          .flatten();
 
-function updateDistance(grid, tilesToUpdate, distance) {
-  //update every selected cells
-  //with new distance value
-  tilesToUpdate
-    //filter already updated tile
-    .filter(([x, z]) => !grid[x][z].updated)
-    .forEach(([x, z]) => {
-      grid[x][z] = { ...grid[x][z], distance, updated: true };
-    });
-}
+        tilesToUpdate = tilesToUpdate.clear();
+        neighbours.forEach((position: Position): void => {
+          const cell = grid.getIn(position);
+          if (cell && !cell.get('updated')) {
+            grid = grid.setIn(
+              position,
+              cell.merge(Map({ distance, updated: true }))
+            );
+            tilesToUpdate = tilesToUpdate.push(position);
+          }
+        });
+        distance = distance + 1;
+      } while (tilesToUpdate.size > 0);
+      console.timeEnd('1');
+      return grid;
+    },
+    updateVectorField(): Grid {
+      let newGrid: Grid = grid.map((row, i) => {
+        return row.map((cell, j) => {
+          if (cell.get('distance') === 0 || cell.get('obstacle')) {
+            return cell;
+          }
+          //Get All neightbours for current cell
+          let neighbours: List<Cell> = utils
+            .getNeighbours([i, j], width, height, step)
+            .map((position: Position): Array => [
+              grid.getIn(position),
+              position
+            ])
+            .filter((cell: Cell): boolean => !cell[0].get('obstacle'));
+          //Get minimum distance
+            let minimumDistance: number = _(
+            neighbours
+          ).min((cell: Cell): number => cell[0].get('distance'))[0];
+          //Get only cell with their distance equals to minimum
+          const validNeighbours = _(neighbours)
+            .filter(
+              cell =>
+                cell[0].get('distance') === minimumDistance.get('distance')
+            )
+            //Calculate heading to target from each possible cell
+            .map(([cell, position]) => {
+              const toTarget: Array<number> = [target[0] - i, target[1] - j];
+              const toLocalTarget: Array<number> = [
+                position[0] - i,
+                position[1] - j
+              ];
+              const dot: number =
+                toTarget[0] * toLocalTarget[0] + toTarget[1] * toLocalTarget[1];
+              const cross: number =
+                toTarget[0] * toLocalTarget[1] - toTarget[1] * toLocalTarget[0];
 
-function getTileNumber(point, step) {
-  return Math.floor(point / step);
+              return [Math.abs(Math.atan(cross / dot)), position];
+            })
+            .value();
+
+          const cellWithBestHeadingToTarget: Position = _.minBy(
+            validNeighbours,
+            ([angle, position]) => angle
+          )[1];
+          return cell.set('direction', [
+            cellWithBestHeadingToTarget[0] - i,
+            cellWithBestHeadingToTarget[1] - j
+          ]);
+        });
+      });
+      grid = newGrid;
+      return grid;
+    }
+  };
 }

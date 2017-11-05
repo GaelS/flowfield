@@ -1,6 +1,6 @@
 var expect = require("expect");
 var { Map } = require("immutable");
-var createFlowField = require("../FlowField2").default;
+var createFlowField = require("../FlowField").default;
 
 describe("FlowField", function() {
   const flowfield = createFlowField(20, 200, 200);

@@ -6,3 +6,4 @@ yarn-error.log*
 dist/bundle.js
 # Dependency directories
 node_modules/
+coverage/

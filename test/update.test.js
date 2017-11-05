@@ -1,5 +1,5 @@
 var expect = require("expect");
-var createFlowField = require("../FlowField2").default;
+var createFlowField = require("../FlowField").default;
 var { List } = require("immutable");
 
 describe("FlowField", function() {

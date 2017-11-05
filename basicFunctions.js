@@ -1,7 +1,7 @@
 //@flow
-import { Map, List } from "immutable";
-import _ from "lodash";
-import type { Cell, Grid, FlowField, Position, UpdateFunction } from "./types";
+import { Map, List } from 'immutable';
+import _ from 'lodash';
+import type { Cell, Grid, FlowField, Position, UpdateFunction } from './types';
 
 function getNeighbours(
   position: Position,
@@ -38,7 +38,7 @@ function getNeighbours(
 function getCorrectedTileIndices(target: Position, step: number): Position {
   const [x, y]: Position = target;
   if (step < 0 || x < 0 || y < 0) {
-    throw "Error, one of the arguments is not positive";
+    throw 'Error, one of the arguments is not positive';
   }
   return [Math.floor(target[0] / step), Math.floor(target[1] / step)];
 }

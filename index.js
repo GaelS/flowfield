@@ -1,4 +1,4 @@
-import manager from "./FlowField2";
+import manager from "./FlowField";
 
 const FF = manager(1, 50, 50);
 const grid = FF.getGrid();
