@@ -3,11 +3,17 @@
 
 </html>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/react/16.0.0/umd/react.production.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.0.0/umd/react-dom.production.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
 <script src='../dist/bundle.js'></script>
-<script>
-  var grid = FlowField.default(1, 2, 2);
-  grid.setTarget([0, 0]);
-  grid.updateDistance();
-  console.log(grid.getGrid().toArray()[0].toArray())
+<script type="text/babel">
+  var FF = FlowField.default(1, 10,10); FF.setTarget([4, 6]); FF.updateDistance(); class App extends React.Component{ setTarget(target){
+  FF.setTarget(target);FF.updateDistance(); this.forceUpdate(); } setObstacle(target){ FF.setObstacle(target);FF.updateDistance();
+  this.forceUpdate(); } render(){ return (
+  <table>{FF.getGrid().map((row,i) =>
+    <tr>{row.map((cell,j) =>
+      <td style={{width: '50px',textAlign: 'center', cursor: 'pointer', height: '50px', backgroundColor: console.log(cell.distance)
+        || cell.obstacle ? 'red' : cell.distance===0 ? 'green' : 'grey'}} onMouseOver={(e)=> {}/*this.setObstacle([i,j])*/} onClick={(e)=>this.setTarget([i,j])}>{cell.distance}</td>)}</tr>)}</table>); }}; ReactDOM.render(
 
+  <App/>, document.getElementById('app'));
 </script>

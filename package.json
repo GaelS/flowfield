@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "BABEL_ENV=dev babel-node index.js",
+    "build": "webpack",
     "test": "BABEL_ENV=test ./node_modules/jest/bin/jest.js",
     "test:watch": "BABEL_ENV=test ./node_modules/jest/bin/jest.js --watchAll"
   },
