@@ -32,7 +32,7 @@ describe("Functions behavior", function() {
     });
     it("should add a new target and remove the previous one", function() {
       const FF = createFlowField(1, 2, 2);
-      const grid = FF.getGrid();
+      const grid = FF.getImmutableGrid();
       const grid1 = FF.setTarget([0, 0]);
 
       expect(grid1.getIn([0, 0])).toEqual(
@@ -50,7 +50,7 @@ describe("Functions behavior", function() {
     });
     it("should add an obstacle", function() {
       const FF = createFlowField(1, 2, 2);
-      const grid = FF.getGrid();
+      const grid = FF.getImmutableGrid();
       const newGrid = FF.setObstacle([1, 1]);
 
       expect(newGrid.getIn([1, 1])).toEqual(
@@ -85,7 +85,7 @@ describe("Functions behavior", function() {
     });
     it("should return the given cell when correct coordinated are provided", function() {
       const FF = createFlowField(1, 2, 2);
-      expect(FF.getCell([0, 1])).toEqual(FF.getGrid().getIn([0, 1]));
+      expect(FF.getCell([0, 1])).toEqual(FF.getImmutableGrid().getIn([0, 1]));
     });
     it("should throw an error the given cell when uncorrect coordinated are provided", function() {
       const FF = createFlowField(1, 2, 2);

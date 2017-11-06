@@ -4,6 +4,7 @@ import { Map, List } from "immutable";
 type Cell = Map<string, any>;
 type Grid = List<List<Cell>>;
 type FlowField = {
+  getImmutableGrid: Function,
   getGrid: Function,
   getCell: Function,
   setTarget: Function,

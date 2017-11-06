@@ -12,8 +12,8 @@ describe("FlowField", function() {
 
     it("should return an object containing an grid of 10 by 10", function() {
       const rows =
-        flowfield.getGrid().filter(row => row.size === 10).size === 10;
-      const columns = flowfield.getGrid().size === 10;
+        flowfield.getImmutableGrid().filter(row => row.size === 10).size === 10;
+      const columns = flowfield.getImmutableGrid().size === 10;
       expect(rows && columns).toBeTruthy();
     });
   });

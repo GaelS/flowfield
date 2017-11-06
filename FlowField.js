@@ -14,7 +14,7 @@ export default function(
   const xRange: number = Math.ceil(width / step);
   const yRange: number = Math.ceil(height / step);
   let target: ?Position;
-  let cache: Map<Grid> = {};
+  //let cache: Map<Grid> = {};
   let grid: Grid = List(_.range(0, xRange)).map((): List<Cell> =>
     List(_.range(0, yRange)).map((): Cell =>
       Map({
@@ -36,8 +36,11 @@ export default function(
     );
   }
   return {
-    getGrid(): Grid {
+    getImmutableGrid(): Grid {
       return grid;
+    },
+    getGrid(): Array<Array<Object>> {
+      return grid.map(row => row.map(cell => cell.toJS()).toArray()).toArray();
     },
     getCell(position: Position): ?Cell {
       if (outOfBounds(position)) {
@@ -67,7 +70,7 @@ export default function(
         const targetCell: ?Cell = grid.getIn(target);
         if (targetCell) {
           const cellReset: Cell = targetCell.merge(
-            Map({ updated: false, distance: -1 })
+            Map({ updated: false, distance: -1, obstacle: false })
           );
           grid = grid.setIn(target, cellReset);
         }
@@ -75,7 +78,7 @@ export default function(
       const newTargetCell: ?Cell = grid.getIn(newTarget);
       if (newTargetCell) {
         const targetSet: Cell = newTargetCell.merge(
-          Map({ distance: 0, updated: true })
+          Map({ distance: 0, updated: true, obstacle: false })
         );
         grid = grid.setIn(newTarget, targetSet);
       }
