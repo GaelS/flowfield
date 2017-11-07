@@ -42,11 +42,11 @@ export default function(
     getGrid(): Array<Array<Object>> {
       return grid.map(row => row.map(cell => cell.toJS()).toArray()).toArray();
     },
-    getCell(position: Position): ?Cell {
+    getCell(position: Position): Object {
       if (outOfBounds(position)) {
         throw 'Out of bounds coordinated provided';
       }
-      return grid.getIn(position);
+      return grid.getIn(position).toJS();
     },
     setObstacle(obstacle: Position): Grid {
       if (outOfBounds(obstacle)) {
@@ -108,7 +108,9 @@ export default function(
       do {
         const neighbours: List<Position> = tilesToUpdate
           .map((position: Position): List<Position> => {
-            return List(utils.getNeighbours(position, width, height, step));
+            return List(
+              utils.getNeighbours(position, width, height, step, grid)
+            );
           })
           .flatten();
 
@@ -123,12 +125,16 @@ export default function(
             tilesToUpdate = tilesToUpdate.push(position);
           }
         });
+        grid.map(e => f => f.map(console.log(f.get('distance'))));
         distance = distance + 1;
       } while (tilesToUpdate.size > 0);
       console.timeEnd('1');
       return grid;
     },
     updateVectorField(): Grid {
+      if (!target) {
+        return grid;
+      }
       let newGrid: Grid = grid.map((row, i) => {
         return row.map((cell, j) => {
           if (cell.get('distance') === 0 || cell.get('obstacle')) {

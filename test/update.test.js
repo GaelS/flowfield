@@ -1,42 +1,42 @@
-var expect = require("expect");
-var createFlowField = require("../FlowField").default;
-var { List } = require("immutable");
+var expect = require('expect');
+var createFlowField = require('../FlowField').default;
+var { List } = require('immutable');
 
-describe("FlowField", function() {
+describe('FlowField', function() {
   const flowfield = createFlowField(1, 2, 2);
-  describe("target", function() {
+  describe('target', function() {
     const FF = createFlowField(1, 4, 4);
     const grid = FF.getGrid();
     FF.setTarget([0, 0]);
     expect(FF.getTarget()).toEqual([0, 0]);
   });
-  describe("update", function() {
-    it("should return current grid if no target are defined", function() {
+  describe('update', function() {
+    it('should return current grid if no target are defined', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.updateDistance();
       expect(FF.getGrid()).toEqual(grid);
     });
-    it("should calculate distances from target correctly", function() {
+    it('should calculate distances from target correctly', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([0, 0]);
       const newGrid = FF.updateDistance()
-        .map(e => e.map(r => r.get("distance")))
+        .map(e => e.map(r => r.get('distance')))
         .toArray();
       expect(newGrid[0]).toEqual(List.of(0, 1, 2, 3));
       expect(newGrid[1]).toEqual(List.of(1, 1, 2, 3));
       expect(newGrid[2]).toEqual(List.of(2, 2, 2, 3));
       expect(newGrid[3]).toEqual(List.of(3, 3, 3, 3));
     });
-    it("should update distances correctly when one adds obstacle 1", function() {
+    it('should update distances correctly when one adds obstacle 1', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([1, 1]);
       FF.setObstacle([0, 0]);
       FF.setObstacle([2, 2]);
       const newGrid = FF.updateDistance()
-        .map(e => e.map(r => r.get("distance")))
+        .map(e => e.map(r => r.get('distance')))
         .toArray();
 
       expect(newGrid[0]).toEqual(List.of(-1, 1, 1, 2));
@@ -45,7 +45,7 @@ describe("FlowField", function() {
       expect(newGrid[3]).toEqual(List.of(2, 2, 2, 3));
     });
   });
-  it("should update distances correctly when one adds obstacle 2", function() {
+  it('should update distances correctly when one adds obstacle 2', function() {
     const FF = createFlowField(1, 10, 10);
     const grid = FF.getGrid();
     FF.setTarget([5, 5]);
@@ -54,7 +54,7 @@ describe("FlowField", function() {
     FF.setObstacle([2, 4]);
 
     const newGrid = FF.updateDistance()
-      .map(e => e.map(r => r.get("distance")))
+      .map(e => e.map(r => r.get('distance')))
       .toArray();
 
     expect(newGrid[0]).toEqual(List.of(6, 6, 6, 5, 5, 5, 5, 5, 5, 5));
@@ -68,7 +68,7 @@ describe("FlowField", function() {
     expect(newGrid[8]).toEqual(List.of(5, 4, 3, 3, 3, 3, 3, 3, 3, 4));
     expect(newGrid[9]).toEqual(List.of(5, 4, 4, 4, 4, 4, 4, 4, 4, 4));
   });
-  it("should update distances correctly when one adds obstacle 3", function() {
+  it('should update distances correctly when one adds obstacle 3', function() {
     const FF = createFlowField(1, 10, 10);
     const grid = FF.getGrid();
     FF.setTarget([5, 5]);
@@ -81,7 +81,7 @@ describe("FlowField", function() {
     FF.setObstacle([8, 7]);
 
     const updatedGrid = FF.updateDistance()
-      .map(e => e.map(r => r.get("distance")))
+      .map(e => e.map(r => r.get('distance')))
       .toArray();
 
     expect(updatedGrid[0]).toEqual(List.of(6, 6, 6, 5, 5, 5, 5, 5, 5, 5));
@@ -95,34 +95,34 @@ describe("FlowField", function() {
     expect(updatedGrid[8]).toEqual(List.of(5, 4, 3, 3, 3, 3, 3, -1, 5, 6));
     expect(updatedGrid[9]).toEqual(List.of(5, 4, 4, 4, 4, 4, 4, 4, 5, 6));
   });
-  it("should calculate direction to target correctly", function() {
+  it('should calculate direction to target correctly', function() {
     const FF = createFlowField(1, 4, 4);
     const grid = FF.getGrid();
     FF.setTarget([0, 0]);
     FF.updateDistance();
     const newGrid = FF.updateVectorField()
-      .map(e => e.map(r => r.get("direction")))
+      .map(e => e.map(r => r.get('direction')))
       .toArray();
     expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
     expect(newGrid[1]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [0, -1]));
     expect(newGrid[2]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [-1, -1]));
     expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, 0], [-1, -1], [-1, -1]));
   });
-  it("should calculate direction to target correctly 1", function() {
+  it('should calculate direction to target correctly 1', function() {
     const FF = createFlowField(1, 4, 4);
     const grid = FF.getGrid();
     FF.setObstacle([1, 0]);
     FF.setTarget([0, 0]);
     FF.updateDistance();
     const newGrid = FF.updateVectorField()
-      .map(e => e.map(r => r.get("direction")))
+      .map(e => e.map(r => r.get('direction')))
       .toArray();
     expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
     expect(newGrid[1]).toEqual(List.of([0, 0], [-1, -1], [-1, -1], [0, -1]));
     expect(newGrid[2]).toEqual(List.of([-1, 1], [-1, 0], [-1, -1], [-1, -1]));
     expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, 0], [-1, -1], [-1, -1]));
   });
-  it("should calculate direction to target correctly 2", function() {
+  it('should calculate direction to target correctly 2', function() {
     const FF = createFlowField(1, 4, 4);
     const grid = FF.getGrid();
     FF.setObstacle([1, 0]);
@@ -130,11 +130,34 @@ describe("FlowField", function() {
     FF.setTarget([0, 0]);
     FF.updateDistance();
     const newGrid = FF.updateVectorField()
-      .map(e => e.map(r => r.get("direction")))
+      .map(e => e.map(r => r.get('direction')))
       .toArray();
     expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
     expect(newGrid[1]).toEqual(List.of([0, 0], [0, 0], [-1, -1], [0, -1]));
     expect(newGrid[2]).toEqual(List.of([0, 1], [-1, 1], [-1, 0], [-1, -1]));
     expect(newGrid[3]).toEqual(List.of([-1, 1], [-1, 0], [-1, -1], [-1, -1]));
+  });
+  it('should not update distance of cell located between two obstacles', function() {
+    /*
+  ** (o) | x | (o)
+  **  x  | o |  x
+  ** (o) | x | (o)
+  ** 
+  ** In that configuration cells with (o) should not be updated
+  ** when working with centered cell in update distance 
+  */
+    const FF = createFlowField(1, 4, 4);
+    FF.setTarget([0, 0]);
+    FF.setObstacle([1, 2]);
+    FF.setObstacle([2, 1]);
+    FF.updateDistance();
+    const grid = FF.getImmutableGrid()
+      .map(e => e.map(r => r.get('distance')))
+      .toArray();
+    console.log(grid)
+    expect(grid[0]).toEqual(List.of(0, 1, 2, 3));
+    expect(grid[1]).toEqual(List.of(1, 1, -1, 4));
+    expect(grid[2]).toEqual(List.of(2, -1, 6, 5));
+    expect(grid[3]).toEqual(List.of(3, 4, 5, 6));
   });
 });
