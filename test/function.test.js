@@ -9,11 +9,13 @@ var { Map } = require('immutable');
 describe('Functions behavior', function() {
   describe('getNeighbours', function() {
     it("should return an grid containing positions of the 3 cell's neighbours located in 0,0", function() {
-      const cells = getNeighbours([0, 0], 2, 2, 1);
+      const FF = createFlowField(1, 2, 2);
+      const cells = getNeighbours([0, 0], 2, 2, 1, FF.getImmutableGrid());
       expect(cells.length).toEqual(3);
     });
     it('should return an empty list', function() {
-      const cells = getNeighbours([-1, -1]);
+      const FF = createFlowField(1, 2, 2);
+      const cells = getNeighbours([-1, -1], 2, 2, 1, FF.getImmutableGrid());
       expect(cells.length).toEqual(0);
     });
   });

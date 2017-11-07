@@ -57,7 +57,8 @@ export default function(
         const updatedCell: Cell = cell
           .set('obstacle', true)
           .set('distance', -1)
-          .set('updated', true);
+          .set('updated', true)
+          .set('direction', [0, 0]);
         grid = grid.setIn(obstacle, updatedCell);
       }
       return grid;
@@ -142,7 +143,7 @@ export default function(
           }
           //Get All neightbours for current cell
           let neighbours: Array<Cell> = utils
-            .getNeighbours([i, j], width, height, step)
+            .getNeighbours([i, j], width, height, step, grid)
             .map((position: Position): Array => [
               grid.getIn(position),
               position
