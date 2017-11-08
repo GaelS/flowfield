@@ -152,7 +152,7 @@ export default function(
           //Get minimum distance
           let minimumDistance: number = _(
             neighbours
-          ).min((cell: Cell): number => cell[0].get('distance'))[0];
+          ).minBy((cell: Cell): number => cell[0].get('distance'))[0];
           //Get only cell with their distance equals to minimum
           const validNeighbours = _(neighbours)
             .filter(
