@@ -9,6 +9,8 @@ type FlowField = {
   getCell: Function,
   setTarget: Function,
   getTarget: Function,
+  setObstacle: Function,
+  removeObstacle: Function,
   updateDistance: Function,
   updateVectorField: Function
 };

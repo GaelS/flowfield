@@ -63,6 +63,21 @@ export default function(
       }
       return grid;
     },
+    removeObstacle(obstacle: Position): Grid {
+      if (outOfBounds(obstacle)) {
+        throw 'Invalid position';
+      }
+      const cell: ?Cell = grid.getIn(obstacle);
+      if (cell) {
+        const updatedCell: Cell = cell
+          .set('obstacle', false)
+          .set('distance', 0)
+          .set('updated', false)
+          .set('direction', [0, 0]);
+        grid = grid.setIn(obstacle, updatedCell);
+      }
+      return grid;
+    },
     setTarget(newTarget: Position): Grid {
       if (outOfBounds(newTarget)) {
         throw 'Invalid target';
