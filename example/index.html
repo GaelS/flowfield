@@ -7,37 +7,85 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
 <script src='../dist/bundle.js'></script>
 <script type="text/babel">
-  var FF = FlowField.default(1, 10,10); 
-  FF.setTarget([4, 6]); 
-  FF.updateDistance(); 
+  function init(w, h){
+    let FF = FlowField.default(1, h,w); 
+    FF.setTarget([4, 6]); 
+    FF.updateDistance(); 
+    return FF;
+  }
   
   class App extends React.Component{ 
-    setTarget(target){
-      FF.setTarget(target);
-      FF.updateDistance();
+    state={mode: 0, width: 10, height: 10, FF: null}
+    componentDidMount(){
+      this.setState({FF : init(this.state.height,this.state.width) });
+    }
+    switchMode=() => {
+      this.setState({mode: !this.state.mode ? 1: 0});
+    }
+    updateWidth = (e) => this.setState({width: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
+    updateHeight = (e) => this.setState({height: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
+    
+    onCellClick(target){
+      const cell = this.state.FF.getCell(target);
+
+      if(cell.distance > 0){ this.state.FF.setObstacle(target); } 
+      if(cell.distance === -1){ this.state.FF.setTarget(target); } 
+      this.state.FF.updateDistance();
+      this.state.FF.updateVectorField();
+      this.forceUpdate();
       this.forceUpdate();
     }
-    onCellClick(target){
-      const cell = FF.getCell(target);
-
-    if(cell.distance > 0){ FF.setObstacle(target); } 
-    if(cell.distance === -1){ FF.setTarget(target); } 
-    FF.updateDistance();
-    this.forceUpdate();
-    } 
     render(){ 
+      if(!this.state.FF){
+        return <div>On going</div>;
+      }
       return ( 
-        <table>{FF.getGrid().map((row,i) =>
-          <tr>{row.map((cell,j) =>
+        [
+          <p>Width</p>,
+          <input  onChange={this.updateWidth} type="range" min="0" max="100" placeholder="width"/>,
+          <p>Height</p>,
+          <input onChange={this.updateHeight} type="range" min="0" max="100"/>,
+          <button onClick={this.switchMode}>Switch Mode</button>,
+          <table>{this.state.FF.getGrid().map((row,i) =>
+          <tr>{row.map((cell,j) => 
             <td style={{width: '50px',textAlign: 'center', cursor: 'pointer', height: '50px', backgroundColor: cell.obstacle ? 'red'
               : cell.distance===0 ? 'green' : 'grey'}} 
               onClick={()=>this.onCellClick([i,j])}>
-                {cell.distance}
+                {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction), 10)) : cell.distance}
             </td>)}
           </tr>)}
-        </table>);
+        </table>]);
     }
   }; 
-        
+    function getArrow(direction){
+      if(!direction || direction.lenth === 0) {
+        return '0';
+      }
+        if(direction[0] === 1 && direction[1] === 0){
+          return "8595"
+        }//right
+        else if(direction[0] === 0 && direction[1] === 1){
+          return "8594"
+        }//left
+        else if(direction[0] === 0 && direction[1] === -1){
+          return "8592"
+        }//top
+        else if(direction[0] === -1 && direction[1] === 0){
+          return "8593"
+        }//bottom right
+        else if(direction[0] === 1 && direction[1] === 1){
+          return "8600"
+        }//bottom left
+        else if(direction[0] === 1 && direction[1] === -1){
+          return "8601"
+        }//top left
+        else if(direction[0] === -1 && direction[1] === -1){
+          return "8598"
+        }//top right
+        else if(direction[0] === -1 && direction[1] === 1){
+          return "8599"
+      }
+      return '8635';
+    }
     ReactDOM.render( <App/>, document.getElementById('app'));
 </script>
