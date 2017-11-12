@@ -5,15 +5,13 @@ import type { Cell, Grid, FlowField, Position, UpdateFunction } from './types';
 
 function getNeighbours(
   position: Position,
-  width: number,
-  height: number,
-  step: number,
+  outOfBounds: Function,
   grid: Grid
 ): Array<Position> {
-  const [x, y]: Position = position;
-  if (x < 0 || y < 0 || x > width / step || y > height / step) {
+  if (outOfBounds(position)) {
     return [];
   }
+  const [x, y]: Position = position;
   // neighbours order
   // 1 8 7
   // 2   6
@@ -29,15 +27,14 @@ function getNeighbours(
       TR: [x + 1, y + 1],
       T: [x, y + 1]
     },
-    (acc: object, [x, y]: Position, key: string): object => {
-      if (x >= 0 && y >= 0 && x < width / step && y < height / step) {
-        acc[key] = [x, y];
+    (acc: object, position: Position, key: string): object => {
+      if (!outOfBounds(position)) {
+        acc[key] = position;
       }
       return acc;
     },
     {}
   );
-
   let neighboursToConsider = _.compact([
     allNeighbours.L,
     allNeighbours.R,
@@ -96,18 +93,6 @@ function getCorrectedTileIndices(target: Position, step: number): Position {
   ** (o) | x | (o)
   ** Cell with (o)
   */
-
-/* function isItACornerCell(currentCell: Position, position: Position): Object {
-  const [x, y] = position;
-  const topOrBottom = currentCell[1] === y - 1 || currentCell[1] === y + 1;
-  return {
-    TL: currentCell[1] === y - 1 && currentCell[0] === x + 1,
-    DL: currentCell[1] === y - 1 && currentCell[0] === x - 1,
-    TR: currentCell[1] === y + 1 && currentCell[0] === x + 1,
-    DR: currentCell[1] === y + 1 && currentCell[0] === x - 1
-  };
-} */
-
 function isCellSurroundedByObstacles(
   currentCell: Position,
   grid: Grid
@@ -119,8 +104,22 @@ function isCellSurroundedByObstacles(
   **  x  | o |  x
   ** (o) | x | (o)
   */
+
+function generateOutOfBoundsFunction(xRange: number, yRange: number): Function {
+  if (!xRange || xRange < 1 || !yRange || yRange < 1) {
+    throw 'Wrong inputs';
+  }
+  return function(position: Position): boolean {
+    if (!Array.isArray(position) || position.length !== 2) {
+      throw 'Error, must provide an array with a length of 2';
+    }
+    const [x, y] = position;
+    return x < 0 || y < 0 || x > xRange - 1 || y > yRange - 1;
+  };
+}
 export default {
   getNeighbours,
   getCorrectedTileIndices,
-  isCellSurroundedByObstacles
+  isCellSurroundedByObstacles,
+  generateOutOfBoundsFunction
 };

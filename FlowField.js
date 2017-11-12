@@ -13,8 +13,13 @@ export default function(
 ): FlowField {
   const xRange: number = Math.ceil(width / step);
   const yRange: number = Math.ceil(height / step);
+  const outOfBounds: Function = utils.generateOutOfBoundsFunction(
+    xRange,
+    yRange
+  );
+
   let target: ?Position;
-  //let cache: Map<Grid> = {};
+
   let grid: Grid = List(_.range(0, xRange)).map((): List<Cell> =>
     List(_.range(0, yRange)).map((): Cell =>
       Map({
@@ -25,16 +30,7 @@ export default function(
       })
     )
   );
-  function outOfBounds(position: Position): boolean {
-    return (
-      !position ||
-      position.length < 2 ||
-      position[0] < 0 ||
-      position[1] < 0 ||
-      position[0] > width / step ||
-      position[1] > height / step
-    );
-  }
+
   return {
     getImmutableGrid(): Grid {
       return grid;
@@ -124,9 +120,7 @@ export default function(
       do {
         const neighbours: List<Position> = tilesToUpdate
           .map((position: Position): List<Position> => {
-            return List(
-              utils.getNeighbours(position, width, height, step, grid)
-            );
+            return List(utils.getNeighbours(position, outOfBounds, grid));
           })
           .flatten();
 
@@ -158,7 +152,7 @@ export default function(
           }
           //Get All neightbours for current cell
           let neighbours: Array<Cell> = utils
-            .getNeighbours([i, j], width, height, step, grid)
+            .getNeighbours([i, j], outOfBounds, grid)
             .map((position: Position): Array => [
               grid.getIn(position),
               position
