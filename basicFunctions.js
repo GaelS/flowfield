@@ -3,6 +3,33 @@ import { Map, List } from 'immutable';
 import _ from 'lodash';
 import type { Cell, Grid, FlowField, Position, UpdateFunction } from './types';
 
+function getSurroundingNeighbours(
+  position: Position,
+  outOfBounds: Function,
+  grid: Grid
+): Array<Position> {
+  if (outOfBounds(position)) {
+    return [];
+  }
+  const [x, y]: Position = position;
+  // neighbours order
+  // 1 8 7
+  // 2   6
+  // 3 4 5
+  const allNeighbours = Map({
+    TL: [x - 1, y + 1],
+    L: [x - 1, y],
+    BL: [x - 1, y - 1],
+    B: [x, y - 1],
+    BR: [x + 1, y - 1],
+    R: [x + 1, y],
+    TR: [x + 1, y + 1],
+    T: [x, y + 1]
+  }).filter(_.identity);
+
+  return allNeighbours.toArray();
+}
+
 function getNeighbours(
   position: Position,
   outOfBounds: Function,
@@ -41,38 +68,28 @@ function getNeighbours(
     allNeighbours.B,
     allNeighbours.T
   ]);
-  if (
-    allNeighbours.L &&
-    !grid.getIn(allNeighbours.L).get('obstacle') &&
-    allNeighbours.T &&
-    !grid.getIn(allNeighbours.T).get('obstacle')
-  ) {
-    neighboursToConsider.push(allNeighbours.TL);
-  }
-  if (
-    allNeighbours.L &&
-    !grid.getIn(allNeighbours.L).get('obstacle') &&
-    allNeighbours.B &&
-    !grid.getIn(allNeighbours.B).get('obstacle')
-  ) {
-    neighboursToConsider.push(allNeighbours.BL);
-  }
-  if (
-    allNeighbours.R &&
-    !grid.getIn(allNeighbours.R).get('obstacle') &&
-    allNeighbours.T &&
-    !grid.getIn(allNeighbours.T).get('obstacle')
-  ) {
-    neighboursToConsider.push(allNeighbours.TR);
-  }
+
+  const isLeftGood =
+    allNeighbours.L && !grid.getIn(allNeighbours.L).get('obstacle');
+  const isRightGood =
+    allNeighbours.R && !grid.getIn(allNeighbours.R).get('obstacle');
+  const areSidesGood = isLeftGood || isRightGood;
 
   if (
-    allNeighbours.R &&
-    !grid.getIn(allNeighbours.R).get('obstacle') &&
+    areSidesGood &&
+    allNeighbours.T &&
+    !grid.getIn(allNeighbours.T).get('obstacle')
+  ) {
+    isLeftGood && neighboursToConsider.push(allNeighbours.TL);
+    isRightGood && neighboursToConsider.push(allNeighbours.TR);
+  }
+  if (
+    areSidesGood &&
     allNeighbours.B &&
     !grid.getIn(allNeighbours.B).get('obstacle')
   ) {
-    neighboursToConsider.push(allNeighbours.BR);
+    isLeftGood && neighboursToConsider.push(allNeighbours.BL);
+    isRightGood && neighboursToConsider.push(allNeighbours.BR);
   }
   return neighboursToConsider;
 }
@@ -121,5 +138,6 @@ export default {
   getNeighbours,
   getCorrectedTileIndices,
   isCellSurroundedByObstacles,
-  generateOutOfBoundsFunction
+  generateOutOfBoundsFunction,
+  getSurroundingNeighbours
 };

@@ -145,32 +145,37 @@ export default function(
       if (!target) {
         return grid;
       }
+      console.time('2');
       let newGrid: Grid = grid.map((row, i) => {
         return row.map((cell, j) => {
           if (cell.get('distance') === 0 || cell.get('obstacle')) {
             return cell;
           }
+          //Vector from current cell to Target
+          const toTarget: Array<number> = [target[0] - i, target[1] - j];
+
           //Get All neightbours for current cell
           let neighbours: Array<Cell> = utils
             .getNeighbours([i, j], outOfBounds, grid)
-            .map((position: Position): Array => [
-              grid.getIn(position),
+            .map((position: Position): Object => ({
+              cell: grid.getIn(position),
               position
-            ])
-            .filter((cell: Cell): boolean => !cell[0].get('obstacle'));
+            }))
+            .filter((props: Object): boolean => !props.cell.get('obstacle'));
+
           //Get minimum distance
-          let minimumDistance: number = _(
-            neighbours
-          ).minBy((cell: Cell): number => cell[0].get('distance'))[0];
+          let minimumDistance: number = _.minBy(
+            neighbours,
+            (props: Object): number => props.cell.get('distance')
+          ).cell.get('distance');
+
           //Get only cell with their distance equals to minimum
           const validNeighbours = _(neighbours)
             .filter(
-              cell =>
-                cell[0].get('distance') === minimumDistance.get('distance')
+              (props: Object) => props.cell.get('distance') === minimumDistance
             )
             //Calculate heading to target from each possible cell
-            .map(([cell, position]) => {
-              const toTarget: Array<number> = [target[0] - i, target[1] - j];
+            .map(({ cell, position }) => {
               const toLocalTarget: Array<number> = [
                 position[0] - i,
                 position[1] - j
@@ -195,6 +200,7 @@ export default function(
         });
       });
       grid = newGrid;
+      console.timeEnd('2');
       return grid;
     }
   };
