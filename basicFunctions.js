@@ -103,19 +103,6 @@ function getCorrectedTileIndices(target: Position, step: number): Position {
   }
   return [Math.floor(target[0] / step), Math.floor(target[1] / step)];
 }
-
-/*
-  ** (o) | x | (o)
-  **  x  | o |  x
-  ** (o) | x | (o)
-  ** Cell with (o)
-  */
-function isCellSurroundedByObstacles(
-  currentCell: Position,
-  grid: Grid
-): Function {
-  return function(position: Position): boolean {};
-}
 /*
   ** (o) | x | (o)
   **  x  | o |  x
@@ -137,7 +124,6 @@ function generateOutOfBoundsFunction(xRange: number, yRange: number): Function {
 export default {
   getNeighbours,
   getCorrectedTileIndices,
-  isCellSurroundedByObstacles,
   generateOutOfBoundsFunction,
   getSurroundingNeighbours
 };

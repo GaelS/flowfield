@@ -135,7 +135,6 @@ export default function(
             tilesToUpdate = tilesToUpdate.push(position);
           }
         });
-        grid.map(e => f => f.map(console.log(f.get('distance'))));
         distance = distance + 1;
       } while (tilesToUpdate.size > 0);
       console.timeEnd('1');
