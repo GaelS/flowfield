@@ -1,6 +1,6 @@
-var expect = require('expect');
-var createFlowField = require('../FlowField').default;
-var { List } = require('immutable');
+const expect = require('expect');
+const createFlowField = require('../FlowField').default;
+const { List } = require('immutable');
 
 describe('FlowField', function() {
   const flowfield = createFlowField(1, 2, 2);
@@ -21,9 +21,12 @@ describe('FlowField', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([0, 0]);
-      const newGrid = FF.updateDistance()
+      FF.updateDistance();
+
+      const newGrid = FF.getImmutableGrid()
         .map(e => e.map(r => r.get('distance')))
         .toArray();
+
       expect(newGrid[0]).toEqual(List.of(0, 1, 2, 3));
       expect(newGrid[1]).toEqual(List.of(1, 1, 2, 3));
       expect(newGrid[2]).toEqual(List.of(2, 2, 2, 3));
@@ -52,13 +55,46 @@ describe('FlowField', function() {
       expect(grid[3]).toEqual(List.of(3, 4, 5, 6));
     });
   });
+  it('should return the grid unmodified if trying to delete obstacle that does not exist', function() {
+    const FF = createFlowField(1, 4, 4);
+    const grid = FF.getImmutableGrid();
+    FF.setObstacle([-1, 2]);
+    const newGrid = FF.getImmutableGrid();
+    expect(grid).toEqual(newGrid);
+  });
+  it('should return unmodified grid when uncorrect coordinated are given to remove obstacle', function() {
+    const FF = createFlowField(1, 2, 2);
+    const grid = FF.getImmutableGrid();
+    FF.setObstacle([1, 2]);
+    FF.removeObstacle([-1, -2]);
+    expect(grid).toEqual(FF.getImmutableGrid());
+  });
+  it('should return a grid with no obstacle if one adds two and delete both of them', function() {
+    const FF = createFlowField(1, 4, 4);
+    FF.setTarget([0, 0]);
+    FF.setObstacle([1, 2]);
+    FF.setObstacle([2, 1]);
+    FF.removeObstacle([2, 1]);
+    FF.removeObstacle([1, 2]);
+
+    FF.updateDistance();
+    const grid = FF.getImmutableGrid()
+      .map(e => e.map(r => r.get('distance')))
+      .toArray();
+    expect(grid[0]).toEqual(List.of(0, 1, 2, 3));
+    expect(grid[1]).toEqual(List.of(1, 1, 2, 3));
+    expect(grid[2]).toEqual(List.of(2, 2, 2, 3));
+    expect(grid[3]).toEqual(List.of(3, 3, 3, 3));
+  });
   it('should update distances correctly when one adds obstacle 1', function() {
     const FF = createFlowField(1, 4, 4);
     const grid = FF.getGrid();
     FF.setTarget([1, 1]);
     FF.setObstacle([0, 0]);
     FF.setObstacle([2, 2]);
-    const newGrid = FF.updateDistance()
+    FF.updateDistance();
+
+    const newGrid = FF.getImmutableGrid()
       .map(e => e.map(r => r.get('distance')))
       .toArray();
 
@@ -76,7 +112,9 @@ it('should update distances correctly when one adds obstacle 2', function() {
   FF.setObstacle([2, 3]);
   FF.setObstacle([2, 4]);
 
-  const newGrid = FF.updateDistance()
+  FF.updateDistance();
+
+  const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
     .toArray();
 
@@ -103,7 +141,9 @@ it('should update distances correctly when one adds obstacle 3', function() {
   FF.setObstacle([7, 7]);
   FF.setObstacle([8, 7]);
 
-  const updatedGrid = FF.updateDistance()
+  FF.updateDistance();
+
+  const updatedGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
     .toArray();
 
@@ -118,12 +158,19 @@ it('should update distances correctly when one adds obstacle 3', function() {
   expect(updatedGrid[8]).toEqual(List.of(5, 4, 3, 3, 3, 3, 3, -1, 7, 7));
   expect(updatedGrid[9]).toEqual(List.of(5, 4, 4, 4, 4, 4, 4, 5, 6, 7));
 });
+it('return the grid unmodified after an updateVector if no target is set', function() {
+  const FF = createFlowField(1, 4, 4);
+  const grid = FF.getImmutableGrid();
+  FF.updateVectorField();
+  expect(grid).toEqual(FF.getImmutableGrid());
+});
 it('should calculate direction to target correctly', function() {
   const FF = createFlowField(1, 4, 4);
   const grid = FF.getGrid();
   FF.setTarget([0, 0]);
   FF.updateDistance();
-  const newGrid = FF.updateVectorField()
+  FF.updateVectorField();
+  const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
@@ -137,7 +184,8 @@ it('should calculate direction to target correctly 1', function() {
   FF.setObstacle([1, 0]);
   FF.setTarget([0, 0]);
   FF.updateDistance();
-  const newGrid = FF.updateVectorField()
+  FF.updateVectorField();
+  const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
@@ -152,7 +200,8 @@ it('should calculate direction to target correctly 2', function() {
   FF.setObstacle([1, 1]);
   FF.setTarget([0, 0]);
   FF.updateDistance();
-  const newGrid = FF.updateVectorField()
+  FF.updateVectorField();
+  const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));

@@ -3,7 +3,7 @@ var createFlowField = require('../FlowField').default;
 var {
   getCorrectedTileIndices,
   getNeighbours,
-  generateOutOfBoundsFunction,
+  generateOutOfBoundsFunction
 } = require('../basicFunctions').default;
 var { Map } = require('immutable');
 
@@ -11,13 +11,13 @@ describe('Functions behavior', function() {
   describe('getNeighbours', function() {
     it("should return an grid containing positions of the 3 cell's neighbours located in 0,0", function() {
       const FF = createFlowField(1, 2, 2);
-      const outOfBounds = generateOutOfBoundsFunction(2,2);
+      const outOfBounds = generateOutOfBoundsFunction(2, 2);
       const cells = getNeighbours([0, 0], outOfBounds, FF.getImmutableGrid());
       expect(cells.length).toEqual(3);
     });
     it('should return an empty list', function() {
       const FF = createFlowField(1, 2, 2);
-      const outOfBounds = generateOutOfBoundsFunction(2,2);
+      const outOfBounds = generateOutOfBoundsFunction(2, 2);
       const cells = getNeighbours([-1, -1], outOfBounds, FF.getImmutableGrid());
       expect(cells.length).toEqual(0);
     });
@@ -38,14 +38,14 @@ describe('Functions behavior', function() {
     it('should add a new target and remove the previous one', function() {
       const FF = createFlowField(1, 2, 2);
       const grid = FF.getImmutableGrid();
-      const grid1 = FF.setTarget([0, 0]);
-
+      FF.setTarget([0, 0]);
+      const grid1 = FF.getImmutableGrid();
       expect(grid1.getIn([0, 0])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
 
-      const grid2 = FF.setTarget([0, 1]);
-
+      FF.setTarget([0, 1]);
+      const grid2 = FF.getImmutableGrid();
       expect(grid2.getIn([0, 0])).not.toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
@@ -62,31 +62,45 @@ describe('Functions behavior', function() {
         Map({ distance: -1, updated: true, direction: [0, 0], obstacle: true })
       );
     });
-    it('should throw when uncorrect coordinated are given to add obstacle', function() {
+    it('should return unmodified grid when uncorrect coordinated are given to add obstacle', function() {
       const FF = createFlowField(1, 2, 2);
-      const A = FF.setObstacle.bind(null, undefined);
-      const B = FF.setObstacle.bind(null, []);
-      const C = FF.setObstacle.bind(null, [0]);
-      const D = FF.setObstacle.bind(null, [3, 0]);
-      const E = FF.setObstacle.bind(null, [0, 3]);
-      expect(A).toThrow();
-      expect(B).toThrow();
-      expect(C).toThrow();
-      expect(D).toThrow();
-      expect(E).toThrow();
+      const grid = FF.getImmutableGrid();
+      const A = FF.setObstacle(undefined);
+      const gridA = FF.getImmutableGrid();
+      const B = FF.setObstacle([]);
+      const gridB = FF.getImmutableGrid();
+      const C = FF.setObstacle([0]);
+      const gridC = FF.getImmutableGrid();
+      const D = FF.setObstacle([3, 0]);
+      const gridD = FF.getImmutableGrid();
+      const E = FF.setObstacle([0, 3]);
+      const gridE = FF.getImmutableGrid();
+
+      expect(gridA).toEqual(grid);
+      expect(gridB).toEqual(grid);
+      expect(gridC).toEqual(grid);
+      expect(gridD).toEqual(grid);
+      expect(gridE).toEqual(grid);
     });
     it('should throw when uncorrect coordinated are given to set a new target', function() {
       const FF = createFlowField(1, 2, 2);
-      const A = FF.setTarget.bind(null, undefined);
-      const B = FF.setTarget.bind(null, []);
-      const C = FF.setTarget.bind(null, [0]);
-      const D = FF.setTarget.bind(null, [3, 0]);
-      const E = FF.setTarget.bind(null, [0, 3]);
-      expect(A).toThrow();
-      expect(B).toThrow();
-      expect(C).toThrow();
-      expect(D).toThrow();
-      expect(E).toThrow();
+      const grid = FF.getImmutableGrid();
+      const A = FF.setTarget(undefined);
+      const gridA = FF.getImmutableGrid();
+      const B = FF.setTarget([]);
+      const gridB = FF.getImmutableGrid();
+      const C = FF.setTarget([0]);
+      const gridC = FF.getImmutableGrid();
+      const D = FF.setTarget([3, 0]);
+      const gridD = FF.getImmutableGrid();
+      const E = FF.setTarget([0, 3]);
+      const gridE = FF.getImmutableGrid();
+
+      expect(gridA).toEqual(grid);
+      expect(gridB).toEqual(grid);
+      expect(gridC).toEqual(grid);
+      expect(gridD).toEqual(grid);
+      expect(gridE).toEqual(grid);
     });
     it('should return the given cell when correct coordinated are provided', function() {
       const FF = createFlowField(1, 2, 2);
@@ -94,18 +108,18 @@ describe('Functions behavior', function() {
         FF.getImmutableGrid().getIn([0, 1]).toJS()
       );
     });
-    it('should throw an error the given cell when uncorrect coordinated are provided', function() {
+    it('should return undefined when calling getCell with uncorrect coordinated', function() {
       const FF = createFlowField(1, 2, 2);
-      const A = FF.getCell.bind(null, undefined);
-      const B = FF.getCell.bind(null, []);
-      const C = FF.getCell.bind(null, [0]);
-      const D = FF.getCell.bind(null, [3, 0]);
-      const E = FF.getCell.bind(null, [0, 3]);
-      expect(A).toThrow();
-      expect(B).toThrow();
-      expect(C).toThrow();
-      expect(D).toThrow();
-      expect(E).toThrow();
+      const A = FF.getCell(undefined);
+      const B = FF.getCell([]);
+      const C = FF.getCell([0]);
+      const D = FF.getCell([3, 0]);
+      const E = FF.getCell([0, 3]);
+      expect(A).toEqual(undefined);
+      expect(B).toEqual(undefined);
+      expect(C).toEqual(undefined);
+      expect(D).toEqual(undefined);
+      expect(E).toEqual(undefined);
     });
   });
 });

@@ -36,73 +36,85 @@ export default function(
       return grid;
     },
     getGrid(): Array<Array<Object>> {
-      return grid.map(row => row.map(cell => cell.toJS()).toArray()).toArray();
+      return grid.toJS();
     },
-    getCell(position: Position): Object {
+    getCell(position: Position): ?Object {
       if (outOfBounds(position)) {
-        throw 'Out of bounds coordinated provided';
+        return undefined;
       }
-      return grid.getIn(position).toJS();
+      const cell = grid.getIn(position);
+      return cell ? cell.toJS() : undefined;
     },
     setObstacle(obstacle: Position): Grid {
       if (outOfBounds(obstacle)) {
-        throw 'Invalid position';
+        return grid;
       }
       const cell: ?Cell = grid.getIn(obstacle);
       if (cell) {
-        const updatedCell: Cell = cell
-          .set('obstacle', true)
-          .set('distance', -1)
-          .set('updated', true)
-          .set('direction', [0, 0]);
+        const updatedCell: Cell = cell.merge(
+          Map({
+            obstacle: true,
+            distance: -1,
+            updated: true,
+            direction: [0, 0]
+          })
+        );
         grid = grid.setIn(obstacle, updatedCell);
       }
       return grid;
     },
     removeObstacle(obstacle: Position): Grid {
       if (outOfBounds(obstacle)) {
-        throw 'Invalid position';
+        return grid;
       }
       const cell: ?Cell = grid.getIn(obstacle);
-      if (cell) {
-        const updatedCell: Cell = cell
-          .set('obstacle', false)
-          .set('distance', 0)
-          .set('updated', false)
-          .set('direction', [0, 0]);
-        grid = grid.setIn(obstacle, updatedCell);
+      if (!cell) {
+        return grid;
       }
+      const updatedCell: Cell = cell.merge(
+        Map({
+          obstacle: false,
+          distance: 0,
+          updated: false,
+          direction: [0, 0]
+        })
+      );
+      grid = grid.setIn(obstacle, updatedCell);
+
       return grid;
     },
     setTarget(newTarget: Position): Grid {
       if (outOfBounds(newTarget)) {
-        throw 'Invalid target';
+        return grid;
+      }
+      const newTargetCell: ?Cell = grid.getIn(newTarget);
+      if (!newTargetCell) {
+        return grid;
       }
       if (target) {
         const targetCell: ?Cell = grid.getIn(target);
-        if (targetCell) {
-          const cellReset: Cell = targetCell.merge(
-            Map({ updated: false, distance: -1, obstacle: false })
-          );
-          grid = grid.setIn(target, cellReset);
+        if (!targetCell) {
+          return grid;
         }
-      }
-      const newTargetCell: ?Cell = grid.getIn(newTarget);
-      if (newTargetCell) {
-        const targetSet: Cell = newTargetCell.merge(
-          Map({ distance: 0, updated: true, obstacle: false })
+        const cellReset: Cell = targetCell.merge(
+          Map({ updated: false, distance: -1, obstacle: false })
         );
-        grid = grid.setIn(newTarget, targetSet);
+        grid = grid.setIn(target, cellReset);
       }
+
+      const targetSet: Cell = newTargetCell.merge(
+        Map({ distance: 0, updated: true, obstacle: false })
+      );
+      grid = grid.setIn(newTarget, targetSet);
       target = newTarget;
-      return grid;
+      return grid.toJS();
     },
     getTarget(): ?Position {
       return target;
     },
     updateDistance(): Grid {
-      if (!target) {
-        return grid;
+      if (!target || target.length !== 2) {
+        return grid.toJS();
       }
       grid = grid.map((row: List<Cell>): List<Cell> =>
         row.map((cell: Cell): Cell => {
@@ -138,11 +150,11 @@ export default function(
         distance = distance + 1;
       } while (tilesToUpdate.size > 0);
       console.timeEnd('1');
-      return grid;
+      return grid.toJS();
     },
     updateVectorField(): Grid {
       if (!target) {
-        return grid;
+        return grid.toJS();
       }
       console.time('2');
       let newGrid: Grid = grid.map((row, i) => {
@@ -200,7 +212,7 @@ export default function(
       });
       grid = newGrid;
       console.timeEnd('2');
-      return grid;
+      return grid.toJS();
     }
   };
 }

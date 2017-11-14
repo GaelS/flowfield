@@ -2,34 +2,6 @@
 import { Map, List } from 'immutable';
 import _ from 'lodash';
 import type { Cell, Grid, FlowField, Position, UpdateFunction } from './types';
-
-function getSurroundingNeighbours(
-  position: Position,
-  outOfBounds: Function,
-  grid: Grid
-): Array<Position> {
-  if (outOfBounds(position)) {
-    return [];
-  }
-  const [x, y]: Position = position;
-  // neighbours order
-  // 1 8 7
-  // 2   6
-  // 3 4 5
-  const allNeighbours = Map({
-    TL: [x - 1, y + 1],
-    L: [x - 1, y],
-    BL: [x - 1, y - 1],
-    B: [x, y - 1],
-    BR: [x + 1, y - 1],
-    R: [x + 1, y],
-    TR: [x + 1, y + 1],
-    T: [x, y + 1]
-  }).filter(_.identity);
-
-  return allNeighbours.toArray();
-}
-
 function getNeighbours(
   position: Position,
   outOfBounds: Function,
@@ -54,7 +26,7 @@ function getNeighbours(
       TR: [x + 1, y + 1],
       T: [x, y + 1]
     },
-    (acc: object, position: Position, key: string): object => {
+    (acc: Object, position: Position, key: string): Object => {
       if (!outOfBounds(position)) {
         acc[key] = position;
       }
@@ -115,7 +87,7 @@ function generateOutOfBoundsFunction(xRange: number, yRange: number): Function {
   }
   return function(position: Position): boolean {
     if (!Array.isArray(position) || position.length !== 2) {
-      throw 'Error, must provide an array with a length of 2';
+      return true;
     }
     const [x, y] = position;
     return x < 0 || y < 0 || x > xRange - 1 || y > yRange - 1;
@@ -124,6 +96,5 @@ function generateOutOfBoundsFunction(xRange: number, yRange: number): Function {
 export default {
   getNeighbours,
   getCorrectedTileIndices,
-  generateOutOfBoundsFunction,
-  getSurroundingNeighbours
+  generateOutOfBoundsFunction
 };
