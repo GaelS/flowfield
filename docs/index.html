@@ -1,5 +1,15 @@
 <html>
-<div id="app"></div>
+
+<head>
+
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+
+</head>
+
+<body style="font-family: 'Inconsolata', monospace" ;>
+
+  <div id="app" style></div>
+</body>
 
 </html>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/react/16.0.0/umd/react.production.min.js'></script>
@@ -11,6 +21,7 @@
     let FF = FlowField.default(1, h,w); 
     FF.setTarget([4, 6]); 
     FF.updateDistance(); 
+    FF.updateVectorField();
     return FF;
   }
   
@@ -33,34 +44,42 @@
       this.state.FF.updateDistance();
       this.state.FF.updateVectorField();
       this.forceUpdate();
-      this.forceUpdate();
     }
     render(){ 
       if(!this.state.FF){
-        return <div>On going</div>;
+        return <div>On going...</div>;
       }
       return ( 
-        [
-          <p>Width</p>,
-          <input  onChange={this.updateWidth} type="range" min="0" max="100" placeholder="width"/>,
-          <p>Height</p>,
-          <input onChange={this.updateHeight} type="range" min="0" max="100"/>,
-          <button onClick={this.switchMode}>Switch Mode</button>,
+        [<div style={{textAlign:'center', fontSize: '25px', marginBottom: '30px', textDecoration: 'underline'}}>Do you feel the flowfield ?? </div>,
+        <div style={{display:'flex', justifyContent:'center'}}>
+        <div style={{
+          marginTop: '200px'}}>
+          <p>Width</p>
+          <input  onChange={this.updateWidth} type="range" min="0" max="30" placeholder="width" value={this.state.width}/>
+          <p>Height</p>
+          <input onChange={this.updateHeight} type="range" min="0" max="30" value={this.state.height}/>
+          <div><button style={{font: 'inherit', marginTop: '10px',padding: '8px',cursor: 'pointer', backgroundColor: '#ffcccc'}} onClick={this.switchMode}>Switch Mode</button></div>
+        </div>
           <table>{this.state.FF.getGrid().map((row,i) =>
           <tr>{row.map((cell,j) => 
-            <td style={{width: '50px',textAlign: 'center', cursor: 'pointer', height: '50px', backgroundColor: cell.obstacle ? 'red'
-              : cell.distance===0 ? 'green' : 'grey'}} 
+            <td style={{width: '50px',textAlign: 'center', cursor: 'pointer', height: '50px', backgroundColor: cell.obstacle ? 'black'
+              : cell.distance===0 ? '#cfc' : '#e9e0e0'}} 
               onClick={()=>this.onCellClick([i,j])}>
-                {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction), 10)) : cell.distance}
+                {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction, cell.obstacle), 10)) : cell.distance}
             </td>)}
           </tr>)}
-        </table>]);
+        </table>
+        </div>])
     }
   }; 
-    function getArrow(direction){
-      if(!direction || direction.lenth === 0) {
+    function getArrow(direction, obstacle){
+      if(!direction || direction.length === 0) {
         return '0';
       }
+      if(obstacle){
+        return '88';
+      }
+      //bottom
         if(direction[0] === 1 && direction[1] === 0){
           return "8595"
         }//right
@@ -85,7 +104,7 @@
         else if(direction[0] === -1 && direction[1] === 1){
           return "8599"
       }
-      return '8635';
+      return '33';
     }
     ReactDOM.render( <App/>, document.getElementById('app'));
 </script>
