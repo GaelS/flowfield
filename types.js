@@ -1,5 +1,5 @@
 /* @flow */
-import { Map, List } from "immutable";
+import { Map, List } from 'immutable';
 
 type Cell = Map<string, any>;
 type Grid = List<List<Cell>>;
@@ -12,7 +12,8 @@ type FlowField = {
   setObstacle: Function,
   removeObstacle: Function,
   updateDistance: Function,
-  updateVectorField: Function
+  updateVectorField: Function,
+  getCellFromRealWorldCoordinates: Function
 };
 type Position = Array<number>;
 type UpdateFunction = (Grid, ?Position, ?number, ?number) => Grid;

@@ -122,4 +122,23 @@ describe('Functions behavior', function() {
       expect(E).toEqual(undefined);
     });
   });
+  it('should throw an error when calculating outOfBounds function absed on wrong arguments', function() {
+    expect(generateOutOfBoundsFunction.bind(null, -1, -1)).toThrow();
+    expect(generateOutOfBoundsFunction.bind(null, undefined, 1)).toThrow();
+    expect(generateOutOfBoundsFunction.bind(null, 1, undefined)).toThrow();
+    expect(generateOutOfBoundsFunction.bind(null)).toThrow();
+  });
+  it('should provide correct cell based on real world coordinates', function() {
+    const FF = createFlowField(25, 100, 100);
+    const FFBis = createFlowField(2, 20, 20);
+    const cell = FF.getCellFromRealWorldCoordinates([90, 90]);
+    const cellBis = FF.getCellFromRealWorldCoordinates([-10, 90]);
+    const cellTer = FFBis.getCellFromRealWorldCoordinates([15, 5]);
+    const cellQ = FFBis.getCellFromRealWorldCoordinates([2.5, 2]);
+
+    expect(cell).toEqual(FF.getImmutableGrid().getIn([3, 3]).toJS());
+    expect(cellBis).not.toBeDefined();
+    expect(cellTer).toEqual(FFBis.getImmutableGrid().getIn([7, 2]).toJS());
+    expect(cellQ).toEqual(FFBis.getImmutableGrid().getIn([1, 0]).toJS());
+  });
 });

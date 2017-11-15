@@ -45,6 +45,16 @@ export default function(
       const cell = grid.getIn(position);
       return cell ? cell.toJS() : undefined;
     },
+    getCellFromRealWorldCoordinates(position: Position): ?Object {
+      const positionInLocalWorld: Position = position.map(coord =>
+        Math.floor(coord / step)
+      );
+      if (outOfBounds(positionInLocalWorld)) {
+        return undefined;
+      }
+      const cell: ?Cell = grid.getIn(positionInLocalWorld);
+      return cell ? cell.toJS() : undefined;
+    },
     setObstacle(obstacle: Position): Grid {
       if (outOfBounds(obstacle)) {
         return grid;
