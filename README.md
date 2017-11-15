@@ -1,21 +1,11 @@
 # Flowfield Manager
 
 
-One Paragraph of project description goes here
-
-#API
-- ~~ajouter fonction pour retourner array sans immutableJS~~
-
-#Exemple
-- développer interface représentant la grid
-- set Target au clic droit => calcul distance/direction
-
 # Améliorations
 - Optimisation bundle webpack
 - publier sur NPM => beau README
 - Cleaner les tests
 - Améliorer code calcul direction
-- Améliorer coverage flow/tests
 
 #Optimisation
 - caching des directions calculées
@@ -23,67 +13,26 @@ One Paragraph of project description goes here
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### The API
 
-### Prerequisites
+TODO ...
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+To run them :
 
 ```
-Give an example
+yarn test
 ```
 
-### And coding style tests
+### Tests purposes
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+Just tryin' to get a 100% coverage...
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Feel free to help and improve this library. This is a first draft that matches my use cases for now but I'm open to improvements :) 
 
 ## Versioning
 
@@ -91,9 +40,9 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Gaël Servaud** - *Initial work* - [PurpleBooth](https://github.com/GaelS)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/GaelS/Flowfield/contributors) who participated in this project.
 
 ## License
 
@@ -101,6 +50,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+My mum.
