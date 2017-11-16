@@ -1,21 +1,61 @@
 <html>
 
 <head>
-
   <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
-
 </head>
+<style>
+  .title {
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 30px;
+    text-decoration: underline;
+  }
 
-<body style="font-family: 'Inconsolata', monospace" ;>
+  .container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cell {
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+    height: 50px;
+    background-color: #e9e0e0;
+  }
+
+  .black {
+    color: black;
+    background-color: black;
+  }
+
+  .target {
+    background-color: #cfc;
+  }
+
+  .obstacle {
+    background-color: #ffcccc;
+  }
+
+  .panel {
+    width: 200px;
+  }
+
+  .button {
+    font: inherit;
+    margin-top: 15px;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #ffcccc;
+  }
+</style>
+
+<body style="font-family: 'Inconsolata', monospace;">
 
   <div id="app" style></div>
 </body>
 
 </html>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/react/16.0.0/umd/react.production.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.0.0/umd/react-dom.production.min.js'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
-<script src='../dist/bundle.js'></script>
 <script type="text/babel">
   function init(w, h){
     let FF = FlowField.default(1, h,w); 
@@ -50,20 +90,18 @@
         return <div>On going...</div>;
       }
       return ( 
-        [<div style={{textAlign:'center', fontSize: '25px', marginBottom: '30px', textDecoration: 'underline'}}>Do you feel the flowfield ?? </div>,
-        <div style={{display:'flex', justifyContent:'center'}}>
-        <div style={{
-          marginTop: '200px'}}>
+        [<div className="title">Try it.</div>,
+        <div className="container">
+        <div className="panel">
           <p>Width</p>
           <input  onChange={this.updateWidth} type="range" min="0" max="30" placeholder="width" value={this.state.width}/>
           <p>Height</p>
           <input onChange={this.updateHeight} type="range" min="0" max="30" value={this.state.height}/>
-          <div><button style={{font: 'inherit', marginTop: '10px',padding: '8px',cursor: 'pointer', backgroundColor: '#ffcccc'}} onClick={this.switchMode}>Switch Mode</button></div>
+          <div><button className='button' onClick={this.switchMode}>Switch Mode</button></div>
         </div>
           <table>{this.state.FF.getGrid().map((row,i) =>
           <tr>{row.map((cell,j) => 
-            <td style={{width: '50px',textAlign: 'center', cursor: 'pointer', height: '50px', backgroundColor: cell.obstacle ? 'black'
-              : cell.distance===0 ? '#cfc' : '#e9e0e0'}} 
+            <td className={`cell ${cell.obstacle ? 'black'  : cell.distance===0 ? 'target' : ''}`} 
               onClick={()=>this.onCellClick([i,j])}>
                 {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction, cell.obstacle), 10)) : cell.distance}
             </td>)}
