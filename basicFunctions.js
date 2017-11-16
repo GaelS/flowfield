@@ -1,7 +1,9 @@
 //@flow
 import { Map, List } from 'immutable';
-import _ from 'lodash';
+import reduce from 'lodash.reduce';
+import compact from 'lodash.compact';
 import type { Cell, Grid, FlowField, Position, UpdateFunction } from './types';
+
 function getNeighbours(
   position: Position,
   outOfBounds: Function,
@@ -15,7 +17,7 @@ function getNeighbours(
   // 1 8 7
   // 2   6
   // 3 4 5
-  const allNeighbours = _.reduce(
+  const allNeighbours = reduce(
     {
       TL: [x - 1, y + 1],
       L: [x - 1, y],
@@ -34,7 +36,7 @@ function getNeighbours(
     },
     {}
   );
-  let neighboursToConsider = _.compact([
+  let neighboursToConsider = compact([
     allNeighbours.L,
     allNeighbours.R,
     allNeighbours.B,

@@ -42,6 +42,10 @@
   },
   "dependencies": {
     "immutable": "^3.8.2",
-    "lodash": "^4.17.4"
+    "lodash.compact": "^3.0.1",
+    "lodash.filter": "^4.6.0",
+    "lodash.map": "^4.6.0",
+    "lodash.minby": "^4.6.0",
+    "lodash.reduce": "^4.6.0"
   }
 }

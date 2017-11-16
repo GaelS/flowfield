@@ -1,6 +1,8 @@
 /* @flow */
-import _ from 'lodash';
-import { Map, List } from 'immutable';
+import filter from 'lodash.filter';
+import map from 'lodash.map';
+import minBy from 'lodash.minby';
+import { Map, List, Range } from 'immutable';
 
 import type { Cell, Grid, FlowField, UpdateFunction, Position } from './types';
 
@@ -20,8 +22,8 @@ export default function(
 
   let target: ?Position;
 
-  let grid: Grid = List(_.range(0, xRange)).map((): List<Cell> =>
-    List(_.range(0, yRange)).map((): Cell =>
+  let grid: Grid = List(Range(0, xRange)).map((): List<Cell> =>
+    List(Range(0, yRange)).map((): Cell =>
       Map({
         distance: -1,
         updated: false,
@@ -185,13 +187,13 @@ export default function(
             .filter((props: Object): boolean => !props.cell.get('obstacle'));
 
           //Get minimum distance
-          let minimumDistance: number = _.minBy(
+          let minimumDistance: number = minBy(
             neighbours,
             (props: Object): number => props.cell.get('distance')
           ).cell.get('distance');
 
           //Get only cell with their distance equals to minimum
-          const validNeighbours = _(neighbours)
+          const validNeighbours = neighbours
             .filter(
               (props: Object) => props.cell.get('distance') === minimumDistance
             )
@@ -207,10 +209,9 @@ export default function(
                 toTarget[0] * toLocalTarget[1] - toTarget[1] * toLocalTarget[0];
 
               return [Math.abs(Math.atan(cross / dot)), position];
-            })
-            .value();
+            });
 
-          const cellWithBestHeadingToTarget: Position = _.minBy(
+          const cellWithBestHeadingToTarget: Position = minBy(
             validNeighbours,
             ([angle, position]) => angle
           )[1];
