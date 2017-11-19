@@ -174,9 +174,9 @@ it('should calculate direction to target correctly', function() {
     .map(e => e.map(r => r.get('direction')))
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
-  expect(newGrid[1]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [0, -1]));
+  expect(newGrid[1]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [-1, -1]));
   expect(newGrid[2]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [-1, -1]));
-  expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, 0], [-1, -1], [-1, -1]));
+  expect(newGrid[3]).toEqual(List.of([-1, 0], [-1, -1], [-1, -1], [-1, -1]));
 });
 it('should calculate direction to target correctly 1', function() {
   const FF = createFlowField(1, 4, 4);
@@ -189,7 +189,7 @@ it('should calculate direction to target correctly 1', function() {
     .map(e => e.map(r => r.get('direction')))
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
-  expect(newGrid[1]).toEqual(List.of([0, 0], [-1, 0], [-1, -1], [0, -1]));
+  expect(newGrid[1]).toEqual(List.of([0, 0], [-1, 0], [-1, -1], [-1, -1]));
   expect(newGrid[2]).toEqual(List.of([0, 1], [-1, 0], [-1, -1], [-1, -1]));
   expect(newGrid[3]).toEqual(List.of([-1, 1], [-1, 0], [-1, -1], [-1, -1]));
 });
@@ -206,6 +206,6 @@ it('should calculate direction to target correctly 2', function() {
     .toArray();
   expect(newGrid[0]).toEqual(List.of([0, 0], [0, -1], [0, -1], [0, -1]));
   expect(newGrid[1]).toEqual(List.of([0, 0], [0, 0], [-1, 0], [-1, -1]));
-  expect(newGrid[2]).toEqual(List.of([1, 1], [0, 1], [-1, 0], [-1, -1]));
+  expect(newGrid[2]).toEqual(List.of([0, 1], [0, 1], [-1, 0], [-1, -1]));
   expect(newGrid[3]).toEqual(List.of([-1, 1], [-1, 1], [-1, 0], [-1, -1]));
 });

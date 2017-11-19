@@ -199,25 +199,19 @@ export default function(
             )
             //Calculate heading to target from each possible cell
             .map(({ cell, position }) => {
-              const toLocalTarget: Array<number> = [
-                position[0] - i,
-                position[1] - j
+              return [
+                (target[1] - position[1]) * (target[1] - position[1]) +
+                  (target[0] - position[0]) * (target[0] - position[0]),
+                position
               ];
-              const dot: number =
-                toTarget[0] * toLocalTarget[0] + toTarget[1] * toLocalTarget[1];
-              const cross: number =
-                toTarget[0] * toLocalTarget[1] - toTarget[1] * toLocalTarget[0];
-
-              return [Math.abs(Math.atan(cross / dot)), position];
             });
-
-          const cellWithBestHeadingToTarget: Position = minBy(
+          const cellClosestToTarget: Position = minBy(
             validNeighbours,
             ([angle, position]) => angle
           )[1];
           return cell.set('direction', [
-            cellWithBestHeadingToTarget[0] - i,
-            cellWithBestHeadingToTarget[1] - j
+            cellClosestToTarget[0] - i,
+            cellClosestToTarget[1] - j
           ]);
         });
       });
