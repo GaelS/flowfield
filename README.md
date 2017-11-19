@@ -1,12 +1,5 @@
 # Flowfield Manager
 
-
-# Améliorations
-- Optimisation bundle webpack
-- publier sur NPM => beau README
-- Cleaner les tests
-- Améliorer code calcul direction
-
 #Optimisation
 - caching des directions calculées
 - utiliser des services workers (options oui/non) pour libérer le main thread.

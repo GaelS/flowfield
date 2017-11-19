@@ -17,10 +17,10 @@
   }
 
   .cell {
-    width: 50px;
+    width: 55px;
     text-align: center;
     cursor: pointer;
-    height: 50px;
+    height: 55px;
     background-color: #e9e0e0;
   }
 
@@ -94,9 +94,9 @@
         <div className="container">
         <div className="panel">
           <p>Width</p>
-          <input  onChange={this.updateWidth} type="range" min="0" max="30" placeholder="width" value={this.state.width}/>
+          <input  onChange={this.updateWidth} type="range" min="4" max="15" placeholder="width" value={this.state.width}/>
           <p>Height</p>
-          <input onChange={this.updateHeight} type="range" min="0" max="30" value={this.state.height}/>
+          <input onChange={this.updateHeight} type="range" min="4" max="30" value={this.state.height}/>
           <div><button className='button' onClick={this.switchMode}>Switch Mode</button></div>
         </div>
           <table>{this.state.FF.getGrid().map((row,i) =>
