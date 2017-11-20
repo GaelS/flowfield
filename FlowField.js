@@ -218,6 +218,26 @@ export default function(
       grid = newGrid;
       console.timeEnd('2');
       return grid.toJS();
+    },
+    getPathFromCoordinates(startPosition: Position): ?Array<Position> {
+      if (outOfBounds(startPosition) || !target) {
+        return undefined;
+      }
+      const startingCell: Cell = grid.getIn(startPosition);
+      const cellsToGoThrough = Range(1, startingCell.get('distance')).reduce(
+        (acc: Array<Position>, distance: Number) => {
+          const direction = grid.getIn(acc[acc.length - 1]).get('direction');
+          return [
+            ...acc,
+            [
+              acc[acc.length - 1][0] + direction[0],
+              acc[acc.length - 1][1] + direction[1]
+            ]
+          ];
+        },
+        [startPosition]
+      );
+      return [...cellsToGoThrough, target];
     }
   };
 }

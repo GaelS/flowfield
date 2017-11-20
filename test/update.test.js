@@ -209,3 +209,45 @@ it('should calculate direction to target correctly 2', function() {
   expect(newGrid[2]).toEqual(List.of([0, 1], [0, 1], [-1, 0], [-1, -1]));
   expect(newGrid[3]).toEqual(List.of([-1, 1], [-1, 1], [-1, 0], [-1, -1]));
 });
+
+it('should get a path', function() {
+  const FF = createFlowField(1, 4, 4);
+  const grid = FF.getGrid();
+  FF.setObstacle([1, 0]);
+  FF.setObstacle([1, 1]);
+  FF.setTarget([0, 0]);
+  FF.updateDistance();
+  FF.updateVectorField();
+
+  const path = FF.getPathFromCoordinates([3, 0]);
+  expect(path).toEqual([
+    [3, 0],
+    [2, 1],
+    [2, 2],
+    [1, 2],
+    [0, 2],
+    [0, 1],
+    [0, 0]
+  ]);
+});
+it('should not get a path', function() {
+  const FF = createFlowField(1, 4, 4);
+  const grid = FF.getGrid();
+  FF.setObstacle([1, 0]);
+  FF.setObstacle([1, 1]);
+  //undefined target
+  FF.setTarget([0, -1]);
+  const path = FF.getPathFromCoordinates([3, 0]);
+  expect(path).toEqual(undefined);
+});
+it('should not get a path', function() {
+  const FF = createFlowField(1, 4, 4);
+  const grid = FF.getGrid();
+  FF.setObstacle([1, 0]);
+  FF.setObstacle([1, 1]);
+  //undefined target
+  FF.setTarget([1, 1]);
+  //impossible cell to go from
+  const path = FF.getPathFromCoordinates([-1, 0]);
+  expect(path).toEqual(undefined);
+});
