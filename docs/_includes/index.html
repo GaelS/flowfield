@@ -33,6 +33,10 @@
     background-color: #cfc;
   }
 
+  .path {
+    background-color: #aaaaaa;
+  }
+
   .obstacle {
     background-color: #ffcccc;
   }
@@ -57,92 +61,92 @@
 
 </html>
 <script type="text/babel">
-  function init(w, h){
-    let FF = FlowField.default(1, h,w); 
-    FF.setTarget([4, 6]); 
-    FF.updateDistance(); 
-    FF.updateVectorField();
-    return FF;
-  }
-  
-  class App extends React.Component{ 
-    state={mode: 0, width: 10, height: 10, FF: null}
-    componentDidMount(){
-      this.setState({FF : init(this.state.height,this.state.width) });
+    function init(w, h){
+      let FF = FlowField.default(1, h,w); 
+      FF.setTarget([4, 6]); 
+      return FF;
     }
-    switchMode=() => {
-      this.setState({mode: !this.state.mode ? 1: 0});
-    }
-    updateWidth = (e) => this.setState({width: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
-    updateHeight = (e) => this.setState({height: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
     
-    onCellClick(target){
-      const cell = this.state.FF.getCell(target);
-
-      if(cell.distance > 0){ this.state.FF.setObstacle(target); } 
-      if(cell.distance === -1){ this.state.FF.setTarget(target); } 
-      this.state.FF.updateDistance();
-      this.state.FF.updateVectorField();
-      this.forceUpdate();
-    }
-    render(){ 
-      if(!this.state.FF){
-        return <div>On going...</div>;
+    class App extends React.Component{ 
+      state={mode: 0, width: 10, height: 10, FF: null, path: []}
+      componentDidMount(){
+        this.setState({FF : init(this.state.height,this.state.width) });
       }
-      return ( 
-        [<div className="title">Try it.</div>,
-        <div className="container">
-        <div className="panel">
-          <p>Width</p>
-          <input  onChange={this.updateWidth} type="range" min="4" max="15" placeholder="width" value={this.state.width}/>
-          <p>Height</p>
-          <input onChange={this.updateHeight} type="range" min="4" max="30" value={this.state.height}/>
-          <div><button className='button' onClick={this.switchMode}>Switch Mode</button></div>
-        </div>
-          <table>{this.state.FF.getGrid().map((row,i) =>
-          <tr>{row.map((cell,j) => 
-            <td className={`cell ${cell.obstacle ? 'black'  : cell.distance===0 ? 'target' : ''}`} 
-              onClick={()=>this.onCellClick([i,j])}>
-                {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction, cell.obstacle), 10)) : cell.distance}
-            </td>)}
-          </tr>)}
-        </table>
-        </div>])
-    }
-  }; 
-    function getArrow(direction, obstacle){
-      if(!direction || direction.length === 0) {
-        return '0';
+      switchMode= () => {
+        this.setState({mode: !this.state.mode ? 1: 0});
       }
-      if(obstacle){
-        return '88';
+      updateWidth = (e) => this.setState({width: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
+      updateHeight = (e) => this.setState({height: parseInt(e.target.value,10)}, () => this.setState({FF: init(this.state.height, this.state.width)}))
+      
+      onCellClick(target){
+        const cell = this.state.FF.getCell(target);
+  
+        if(cell.distance === 0){ this.state.FF.setObstacle(target); } 
+        if(cell.obstacle){ this.state.FF.setTarget(target); } 
+        else {
+          this.state.FF.setObstacle(target);
+        }
+        this.forceUpdate();
       }
-      //bottom
-        if(direction[0] === 1 && direction[1] === 0){
-          return "8595"
-        }//right
-        else if(direction[0] === 0 && direction[1] === 1){
-          return "8594"
-        }//left
-        else if(direction[0] === 0 && direction[1] === -1){
-          return "8592"
-        }//top
-        else if(direction[0] === -1 && direction[1] === 0){
-          return "8593"
-        }//bottom right
-        else if(direction[0] === 1 && direction[1] === 1){
-          return "8600"
-        }//bottom left
-        else if(direction[0] === 1 && direction[1] === -1){
-          return "8601"
-        }//top left
-        else if(direction[0] === -1 && direction[1] === -1){
-          return "8598"
-        }//top right
-        else if(direction[0] === -1 && direction[1] === 1){
-          return "8599"
+      render(){ 
+        if(!this.state.FF){
+          return <div>On going...</div>;
+        }
+        return ( 
+          [<div className="title">Try it.</div>,
+          <div className="container">
+          <div className="panel">
+            <p>Width</p>
+            <input  onChange={this.updateWidth} type="range" min="4" max="15" placeholder="width" value={this.state.width}/>
+            <p>Height</p>
+            <input onChange={this.updateHeight} type="range" min="4" max="30" value={this.state.height}/>
+            <div><button className='button' onClick={this.switchMode}>Switch Mode</button></div>
+          </div>
+            <table>{this.state.FF.getGrid().map((row,i) =>
+            <tr>{row.map((cell,j) => 
+              <td className={`cell ${!!this.state.path.filter(e => e[0] === i && e[1] === j)[0] && cell.distance !== 0 && !cell.obstacle ? 'path' : cell.obstacle ? 'black'  : cell.distance===0 ? 'target' : ''}`} 
+                onClick={()=>this.onCellClick([i,j])}
+                onMouseOver={() => this.state.FF && this.setState({path: this.state.FF.getPathFromCoordinates([i,j]) })}>
+                  {this.state.mode ? String.fromCharCode(parseInt(getArrow(cell.direction, cell.obstacle), 10)) : cell.distance}
+              </td>)}
+            </tr>)}
+          </table>
+          </div>])
       }
-      return '33';
-    }
-    ReactDOM.render( <App/>, document.getElementById('app'));
-</script>
+    }; 
+      function getArrow(direction, obstacle){
+        if(!direction || direction.length === 0) {
+          return '0';
+        }
+        if(obstacle){
+          return '88';
+        }
+        //bottom
+          if(direction[0] === 1 && direction[1] === 0){
+            return "8595"
+          }//right
+          else if(direction[0] === 0 && direction[1] === 1){
+            return "8594"
+          }//left
+          else if(direction[0] === 0 && direction[1] === -1){
+            return "8592"
+          }//top
+          else if(direction[0] === -1 && direction[1] === 0){
+            return "8593"
+          }//bottom right
+          else if(direction[0] === 1 && direction[1] === 1){
+            return "8600"
+          }//bottom left
+          else if(direction[0] === 1 && direction[1] === -1){
+            return "8601"
+          }//top left
+          else if(direction[0] === -1 && direction[1] === -1){
+            return "8598"
+          }//top right
+          else if(direction[0] === -1 && direction[1] === 1){
+            return "8599"
+        }
+        return '33';
+      }
+      ReactDOM.render( <App/>, document.getElementById('app'));
+  </script>

@@ -229,9 +229,9 @@ export default function(
     getTarget(): ?Position {
       return target;
     },
-    getPathFromCoordinates(startPosition: Position): ?Array<Position> {
+    getPathFromCoordinates(startPosition: Position): Array<Position> {
       if (outOfBounds(startPosition) || !target) {
-        return undefined;
+        return [];
       }
       const startingCell: Cell = grid.getIn(startPosition);
       const cellsToGoThrough = Range(1, startingCell.get('distance')).reduce(

@@ -42,7 +42,7 @@ describe('FlowField', function() {
       FF.setTarget([0, 0]);
       FF.setObstacle([1, 2]);
       FF.setObstacle([2, 1]);
-      
+
       const grid = FF.getImmutableGrid()
         .map(e => e.map(r => r.get('distance')))
         .toArray();
@@ -74,7 +74,6 @@ describe('FlowField', function() {
     FF.removeObstacle([2, 1]);
     FF.removeObstacle([1, 2]);
 
-    
     const grid = FF.getImmutableGrid()
       .map(e => e.map(r => r.get('distance')))
       .toArray();
@@ -89,7 +88,6 @@ describe('FlowField', function() {
     FF.setTarget([1, 1]);
     FF.setObstacle([0, 0]);
     FF.setObstacle([2, 2]);
-    
 
     const newGrid = FF.getImmutableGrid()
       .map(e => e.map(r => r.get('distance')))
@@ -108,8 +106,6 @@ it('should update distances correctly when one adds obstacle 2', function() {
   FF.setObstacle([2, 2]);
   FF.setObstacle([2, 3]);
   FF.setObstacle([2, 4]);
-
-  
 
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
@@ -138,8 +134,6 @@ it('should update distances correctly when one adds obstacle 3', function() {
   FF.setObstacle([7, 7]);
   FF.setObstacle([8, 7]);
 
-   
-
   const updatedGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
     .toArray();
@@ -158,15 +152,14 @@ it('should update distances correctly when one adds obstacle 3', function() {
 it('return the grid unmodified after an updateVector if no target is set', function() {
   const FF = createFlowField(1, 4, 4);
   const grid = FF.getImmutableGrid();
-    
+
   expect(grid).toEqual(FF.getImmutableGrid());
 });
 it('should calculate direction to target correctly', function() {
   const FF = createFlowField(1, 4, 4);
   const grid = FF.getGrid();
   FF.setTarget([0, 0]);
-   
-    
+
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -180,8 +173,7 @@ it('should calculate direction to target correctly 1', function() {
   const grid = FF.getGrid();
   FF.setObstacle([1, 0]);
   FF.setTarget([0, 0]);
-   
-    
+
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -196,8 +188,7 @@ it('should calculate direction to target correctly 2', function() {
   FF.setObstacle([1, 0]);
   FF.setObstacle([1, 1]);
   FF.setTarget([0, 0]);
-  
-    
+
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -213,8 +204,6 @@ it('should get a path', function() {
   FF.setObstacle([1, 0]);
   FF.setObstacle([1, 1]);
   FF.setTarget([0, 0]);
-  
-    
 
   const path = FF.getPathFromCoordinates([3, 0]);
   expect(path).toEqual([
@@ -235,7 +224,7 @@ it('should not get a path', function() {
   //undefined target
   FF.setTarget([0, -1]);
   const path = FF.getPathFromCoordinates([3, 0]);
-  expect(path).toEqual(undefined);
+  expect(path).toEqual([]);
 });
 it('should not get a path', function() {
   const FF = createFlowField(1, 4, 4);
@@ -246,5 +235,5 @@ it('should not get a path', function() {
   FF.setTarget([1, 1]);
   //impossible cell to go from
   const path = FF.getPathFromCoordinates([-1, 0]);
-  expect(path).toEqual(undefined);
+  expect(path).toEqual([]);
 });
