@@ -43,12 +43,9 @@ describe('Functions behavior', function() {
       expect(grid1.getIn([0, 0])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
-
       FF.setTarget([0, 1]);
       const grid2 = FF.getImmutableGrid();
-      expect(grid2.getIn([0, 0])).not.toEqual(
-        Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
-      );
+      expect(grid2.getIn([0, 0]).get('distance')).not.toEqual(0);
       expect(grid2.getIn([0, 1])).toEqual(
         Map({ distance: 0, updated: true, direction: [0, 0], obstacle: false })
       );
@@ -56,9 +53,8 @@ describe('Functions behavior', function() {
     it('should add an obstacle', function() {
       const FF = createFlowField(1, 2, 2);
       const grid = FF.getImmutableGrid();
-      const newGrid = FF.setObstacle([1, 1]);
-
-      expect(newGrid.getIn([1, 1])).toEqual(
+      FF.setObstacle([1, 1]);
+      expect(FF.getImmutableGrid().getIn([1, 1])).toEqual(
         Map({ distance: -1, updated: true, direction: [0, 0], obstacle: true })
       );
     });

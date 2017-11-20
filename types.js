@@ -11,10 +11,8 @@ type FlowField = {
   getTarget: Function,
   setObstacle: Function,
   removeObstacle: Function,
-  updateDistance: Function,
-  updateVectorField: Function,
   getCellFromRealWorldCoordinates: Function,
-  getPathFromCoordinates: Function,
+  getPathFromCoordinates: Function
 };
 type Position = Array<number>;
 type UpdateFunction = (Grid, ?Position, ?number, ?number) => Grid;

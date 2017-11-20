@@ -4,25 +4,22 @@ const { List } = require('immutable');
 
 describe('FlowField', function() {
   const flowfield = createFlowField(1, 2, 2);
-  describe('target', function() {
-    const FF = createFlowField(1, 4, 4);
-    const grid = FF.getGrid();
-    FF.setTarget([0, 0]);
-    expect(FF.getTarget()).toEqual([0, 0]);
-  });
   describe('update', function() {
+    it('should define a target', function() {
+      const FF = createFlowField(1, 4, 4);
+      const grid = FF.getGrid();
+      FF.setTarget([0, 0]);
+      expect(FF.getTarget()).toEqual([0, 0]);
+    });
     it('should return current grid if no target are defined', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
-      FF.updateDistance();
       expect(FF.getGrid()).toEqual(grid);
     });
     it('should calculate distances from target correctly', function() {
       const FF = createFlowField(1, 4, 4);
       const grid = FF.getGrid();
       FF.setTarget([0, 0]);
-      FF.updateDistance();
-
       const newGrid = FF.getImmutableGrid()
         .map(e => e.map(r => r.get('distance')))
         .toArray();
@@ -45,7 +42,7 @@ describe('FlowField', function() {
       FF.setTarget([0, 0]);
       FF.setObstacle([1, 2]);
       FF.setObstacle([2, 1]);
-      FF.updateDistance();
+      
       const grid = FF.getImmutableGrid()
         .map(e => e.map(r => r.get('distance')))
         .toArray();
@@ -77,7 +74,7 @@ describe('FlowField', function() {
     FF.removeObstacle([2, 1]);
     FF.removeObstacle([1, 2]);
 
-    FF.updateDistance();
+    
     const grid = FF.getImmutableGrid()
       .map(e => e.map(r => r.get('distance')))
       .toArray();
@@ -92,7 +89,7 @@ describe('FlowField', function() {
     FF.setTarget([1, 1]);
     FF.setObstacle([0, 0]);
     FF.setObstacle([2, 2]);
-    FF.updateDistance();
+    
 
     const newGrid = FF.getImmutableGrid()
       .map(e => e.map(r => r.get('distance')))
@@ -112,7 +109,7 @@ it('should update distances correctly when one adds obstacle 2', function() {
   FF.setObstacle([2, 3]);
   FF.setObstacle([2, 4]);
 
-  FF.updateDistance();
+  
 
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
@@ -141,7 +138,7 @@ it('should update distances correctly when one adds obstacle 3', function() {
   FF.setObstacle([7, 7]);
   FF.setObstacle([8, 7]);
 
-  FF.updateDistance();
+   
 
   const updatedGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('distance')))
@@ -161,15 +158,15 @@ it('should update distances correctly when one adds obstacle 3', function() {
 it('return the grid unmodified after an updateVector if no target is set', function() {
   const FF = createFlowField(1, 4, 4);
   const grid = FF.getImmutableGrid();
-  FF.updateVectorField();
+    
   expect(grid).toEqual(FF.getImmutableGrid());
 });
 it('should calculate direction to target correctly', function() {
   const FF = createFlowField(1, 4, 4);
   const grid = FF.getGrid();
   FF.setTarget([0, 0]);
-  FF.updateDistance();
-  FF.updateVectorField();
+   
+    
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -183,8 +180,8 @@ it('should calculate direction to target correctly 1', function() {
   const grid = FF.getGrid();
   FF.setObstacle([1, 0]);
   FF.setTarget([0, 0]);
-  FF.updateDistance();
-  FF.updateVectorField();
+   
+    
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -199,8 +196,8 @@ it('should calculate direction to target correctly 2', function() {
   FF.setObstacle([1, 0]);
   FF.setObstacle([1, 1]);
   FF.setTarget([0, 0]);
-  FF.updateDistance();
-  FF.updateVectorField();
+  
+    
   const newGrid = FF.getImmutableGrid()
     .map(e => e.map(r => r.get('direction')))
     .toArray();
@@ -216,8 +213,8 @@ it('should get a path', function() {
   FF.setObstacle([1, 0]);
   FF.setObstacle([1, 1]);
   FF.setTarget([0, 0]);
-  FF.updateDistance();
-  FF.updateVectorField();
+  
+    
 
   const path = FF.getPathFromCoordinates([3, 0]);
   expect(path).toEqual([
