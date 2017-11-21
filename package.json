@@ -1,7 +1,14 @@
 {
   "name": "flowfield",
   "version": "0.0.1",
-  "description": "",
+  "description": "This library is to provide a pathfinding mechanism based on vectors field.",
+  "keywords": [
+    "pathfinding",
+    "flowfield",
+    "2d-game"
+  ],
+  "author" : "Gaël Servaud <servauga@gmail.com",
+  "bugs": "https://github.com/GaelS/flowfield/issues",
   "main": "index.js",
   "scripts": {
     "dev": "BABEL_ENV=dev babel-node index.js",
@@ -19,7 +26,6 @@
       }
     }
   },
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.0",
