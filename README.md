@@ -2,7 +2,7 @@
 
 This library is to provide a pathfinding mechanism based on vectors field.
 
-You can find a working example here : [Live Example](https://apprendre-react/flowfield)
+You can find a working example here : [Live Example](http://www.apprendre-react.fr/flowfield/)
 ## Getting Started
 
 Download the package either from npm or yarn via :
@@ -82,7 +82,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the ISC License.
 
 ## Acknowledgments
 
