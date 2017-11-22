@@ -1,6 +1,6 @@
 # Flowfield Manager
 
-This library is to provide a pathfinding mechanism based on vectors field.
+This library provides a pathfinding mechanism based on vectors field.
 
 You can find a working example here : [Live Example](http://www.apprendre-react.fr/flowfield/)
 ## Getting Started
