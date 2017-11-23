@@ -1,7 +1,7 @@
 {
   "name": "flowfield",
-  "version": "0.0.1",
-  "description": "This library is to provide a pathfinding mechanism based on vectors field.",
+  "version": "0.0.2",
+  "description": "This library provides a pathfinding mechanism based on vectors field.",
   "keywords": [
     "pathfinding",
     "flowfield",
@@ -9,6 +9,10 @@
   ],
   "author" : "Gaël Servaud <servauga@gmail.com",
   "bugs": "https://github.com/GaelS/flowfield/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GaelS/flowfield"
+  },
   "main": "index.js",
   "scripts": {
     "dev": "BABEL_ENV=dev babel-node index.js",

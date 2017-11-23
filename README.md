@@ -5,48 +5,109 @@ This library provides a pathfinding mechanism based on vectors field.
 You can find a working example here : [Live Example](http://www.apprendre-react.fr/flowfield/)
 ## Getting Started
 
-Download the package either from npm or yarn via :
+### Installation 
+Download the package with **yarn**
 `yarn add flowfield`
-
+or **npm** with `npm install --dev flowfield`
 
 `import flowfield from flowfield`;
 
+### Basics example
 ```
+  import flowfield from flowfield;
   //create the flowfield
   const FF = flowfield(1, 20,20); //Create a grid of 10x10
   FF.setTarget([2,2]); //add a target
   FF.addObstacle([3,3]);
   FF.addObstacle([7,2]);
-  const path = FF.getPathFromCorrdinates([8,9]); //return array of position to reach the target in [2,2] from [8,9];
+  const path = FF.getPathFromCoordinates([8,9]); //return array of position to reach the target in [2,2] from [8,9];
 ```
 
 ### The API
+#### Basic types
 
-#### flowfield(step: number, height: number, width: number): FlowField
-  Create the flowfield based on step, height and number.
-  To get the size of the grid you are about to create, it is simply `height/step x width/step`.
-  For example, `flowfield(2, 10, 10)` will create a grid of 5x5.
-#### setTarget(position: Array<number>) : Grid
-  Defines a new target on the flowfield
-#### setObstacle(position: Array<number>) : Grid
-  Add an obstacle on the flowfield. This cell will be therefore avoided to calculate path.
-#### removeObstacle(position: Array<number>) : Grid
-  Remove an obstacle on the flowfield.
-#### TODO: setObstacleFromWorldCoordinates
+* **Flowfield** : Object containing the Grid and all the following methods.
+
+* **Grid** : `Array<Array<Cell>>`.
+
+* **Cell** : `Object` containing several attributes
+  * distance : `Number` - number of cells between the current cell and the target
+  * direction : `Array<Number>` - normalized direction from the cell to the target
+  * obstacle : `boolean` - describing whether the cell is an obstacle
+
+
+#### Methods 
+
+* **flowfield**
+
+`flowfield( step: number, height: number, width: number): FlowField Object`
+
+  Create a flowfield based on `step`, `height` and `number`.
+  
+  The size of the grid it is about to create is simply `[height/step ,width/step`].
+
+  >For example, `flowfield(2, 10, 10)` will create a grid of `5 x 5`.
+
+
+* **setTarget**
+  
+  `setTarget(position: Array<number>) : Grid`
+  
+  Set the target of the flowfield
+
+* **setObstacle**
+
+  `setObstacle(position: Array<number>) : Grid`
+  
+  Given the position provided, adds an obstacle on the flowfield. This cell will be therefore avoided to calculate path.
+
+* **removeObstacle**
+
+  `removeObstacle(position: Array<number>) : Grid`
+
+  If the cell at the given position is an obstacle, set it back as a regular cell. Does nothing otherwise.
+
+*  **getPathFromCoordinates**
+
+  `getPathFromCoordinates(position: Array<number>) : Array<Array<Number>>`
+
+  Given a position, returns an array containing the coordinates of the path to go from the given cell to the target of the flowfield.
+
+* **getGrid**
+
+  `getGrid() : Array<Array<Object>>`
+
+  Returns the entire grid.
+
+* **getImmutableGrid**
+    
+    `getImmutableGrid : List<List<Map>>`
+  
+  Returns the Immutable object representing the grid. Might be relevant if [Immutable.js](https://facebook.github.io/immutable-js/) is used in your project
+
+* **getCell**
+
+  `getCell(position: Array<number>) : Object`
+
+  From the position provided, it returns the object representing the cell. 
+
+* **getCellFromRealWorldCoordinates**
+  
+  `getCellFromRealWorldCoordinates(position: Array<number>) : Cell`
+  
+  From the "real world coordinates" position provided, it returns the object representing the cell. 
+
+  >For example, with a `flowfield(2, 10, 10)`, `getCell(3,3) will return the cell located in [1,1] in the grid space.`. 
+
+#### TODO
+  * setObstacleFromWorldCoordinates
+
   Same as before except that it takes "real world coordinates". Meaning that the conversion to the grid system will be done automatically based on 
   the step parameter provided at the Flowfield creation.
-#### TODO: removeObstacleFromWorldCoordinates
+
+  * removeObstacleFromWorldCoordinates
+
   Same as before but with "real world coordinates".
-#### getPathFromCoordinates(position: Array<number>) : Array<Array<Number>>
-  Given a position (eg : [x,y]), it return an array containing the coordinates of the path to go from the given position to the target.
-#### getGrid() : Array<Array<Object>>
-  Returns the entire grid.
-#### getImmutableGrid : List<List<Map>>
-  Returns the immutable object representing the grid. Might be useful if immutable is used in your project
-#### getCell(position: Array<number>) : Object
-  From the position provided, it returns the object representing the cell. 
-#### getCellFromRealWorldCoordinates(position: Array<number>) : Cell
-  From the "real world coordinates" position provided, it returns the object representing the cell. 
 
 ## Running the tests
 
@@ -58,7 +119,7 @@ yarn test
 
 ### Tests purposes
 
-Just tryin' to get a 100% coverage...
+Just trying to get a 100% coverage...
 
 ## Roadmap
   - Code refactoring to remove duplications
@@ -76,14 +137,10 @@ Feel free to help and improve this library by opening a PR. As said previously, 
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
-## Authors
+## Author
 
 * **Gaël Servaud** - *Initial work* - [My profile](https://github.com/GaelS)
 
 ## License
 
 This project is licensed under the ISC License.
-
-## Acknowledgments
-
-My mum.
