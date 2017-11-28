@@ -14,7 +14,7 @@ or **npm** with `npm install FlowField`
 ```
   import flowfield from FlowField;
   //create the flowfield
-  const FF = flowfield.create(1, 20, 20); //Create a grid of 10x10
+  const FF = flowfield.create(2, 20, 20); //Create a grid of 10x10
   FF.setTarget([2,2]); //add a target
   FF.addObstacle([3,3]);
   FF.addObstacle([7,2]);
