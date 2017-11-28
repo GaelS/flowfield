@@ -1,6 +1,6 @@
 {
   "name": "flowfield",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "This library provides a pathfinding mechanism based on vectors field.",
   "keywords": [
     "pathfinding",

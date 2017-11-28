@@ -1,2 +1,2 @@
 import { create } from './FlowField';
-export { create };
+export default { create };
