@@ -1,6 +1,6 @@
 {
   "name": "flowfield",
-  "version": "0.0.3",
+  "version": "0.0.31",
   "description": "This library provides a pathfinding mechanism based on vectors field.",
   "keywords": [
     "pathfinding",
@@ -15,7 +15,6 @@
   },
   "main": "./dist/bundle.js",
   "scripts": {
-    "dev": "BABEL_ENV=dev babel-node index.js",
     "build": "webpack",
     "test": "BABEL_ENV=test ./node_modules/jest/bin/jest.js",
     "test:watch": "BABEL_ENV=test ./node_modules/jest/bin/jest.js --watchAll"

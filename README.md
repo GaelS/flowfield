@@ -7,16 +7,14 @@ You can find a working example here : [Live Example](http://www.apprendre-react.
 
 ### Installation 
 Download the package with **yarn**
-`yarn add flowfield`
-or **npm** with `npm install --dev flowfield`
-
-`import flowfield from flowfield`;
+`yarn add FlowField`
+or **npm** with `npm install FlowField`
 
 ### Basics example
 ```
-  import flowfield from flowfield;
+  import flowfield from FlowField;
   //create the flowfield
-  const FF = flowfield(1, 20,20); //Create a grid of 10x10
+  const FF = flowfield.create(1, 20, 20); //Create a grid of 10x10
   FF.setTarget([2,2]); //add a target
   FF.addObstacle([3,3]);
   FF.addObstacle([7,2]);
@@ -38,15 +36,15 @@ or **npm** with `npm install --dev flowfield`
 
 #### Methods 
 
-* **flowfield**
+* **create**
 
-`flowfield( step: number, height: number, width: number): FlowField Object`
+`create( step: number, height: number, width: number): FlowField Object`
 
   Create a flowfield based on `step`, `height` and `number`.
   
   The size of the grid it is about to create is simply `[height/step ,width/step`].
 
-  >For example, `flowfield(2, 10, 10)` will create a grid of `5 x 5`.
+  >For example, `flowfield.create(2, 10, 10)` will create a grid of `5 x 5` cells.
 
 
 * **setTarget**
@@ -97,7 +95,7 @@ or **npm** with `npm install --dev flowfield`
   
   From the "real world coordinates" position provided, it returns the object representing the cell. 
 
-  >For example, with a `flowfield(2, 10, 10)`, `getCell(3,3) will return the cell located in [1,1] in the grid space.`. 
+  >For example, with a `flowfield.create(2, 10, 10)`, `getCell(3,3) will return the cell located in [1,1] in the grid space.`. 
 
 #### TODO
   * setObstacleFromWorldCoordinates

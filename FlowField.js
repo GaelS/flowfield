@@ -8,11 +8,7 @@ import type { Cell, Grid, FlowField, UpdateFunction, Position } from './types';
 
 import utils from './basicFunctions';
 
-export default function(
-  step: number,
-  height: number,
-  width: number
-): FlowField {
+export function create(step: number, height: number, width: number): FlowField {
   const xRange: number = Math.ceil(width / step);
   const yRange: number = Math.ceil(height / step);
   const outOfBounds: Function = utils.generateOutOfBoundsFunction(
@@ -48,7 +44,6 @@ export default function(
     let distance: number = 1;
     let tilesToUpdate: List<Position> = List();
     tilesToUpdate = tilesToUpdate.push(target);
-    console.time('1');
     do {
       const neighbours: List<Position> = tilesToUpdate
         .map((position: Position): List<Position> => {
@@ -69,14 +64,12 @@ export default function(
       });
       distance = distance + 1;
     } while (tilesToUpdate.size > 0);
-    console.timeEnd('1');
     return grid;
   }
   function updateVectorField(grid: Grid): Grid {
     if (!target || target.length !== 2) {
       return grid;
     }
-    console.time('2');
     let newGrid: Grid = grid.map((row, i) => {
       return row.map((cell, j) => {
         if (cell.get('distance') === 0 || cell.get('obstacle')) {
@@ -124,7 +117,6 @@ export default function(
       });
     });
     grid = newGrid;
-    console.timeEnd('2');
     return grid;
   }
   function updateGrid(): Grid {
@@ -219,7 +211,12 @@ export default function(
       }
 
       const targetSet: Cell = newTargetCell.merge(
-        Map({ distance: 0, updated: true, obstacle: false, direction: [0, 0] })
+        Map({
+          distance: 0,
+          updated: true,
+          obstacle: false,
+          direction: [0, 0]
+        })
       );
       grid = grid.setIn(newTarget, targetSet);
       target = newTarget;
