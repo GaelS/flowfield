@@ -3,7 +3,6 @@ logs
 *.log
 npm-debug.log*
 yarn-error.log*
-dist/bundle.js
 # Dependency directories
 node_modules/
 coverage/
